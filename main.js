@@ -3,11 +3,13 @@ import "./style.css";
 
 // desktop menu
 document.addEventListener("DOMContentLoaded", function () {
-  let bookListData;
+  let bookListData = [];
+  let searchTimeout;
 
   async function fetchBookList() {
-    const endPoint = "https://gutendex.com/books"; 
+    const endPoint = "https://gutendex.com/books";
 
+    renderSkeletonCards();
     try {
       const response = await fetch(endPoint);
 
@@ -17,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
       bookListData = await response.json();
       console.log({ bookListData });
 
-      
       renderBookCards(bookListData.results);
     } catch (error) {
       console.error(error);
@@ -27,51 +28,144 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchBookList();
 
   function renderBookCards(books) {
-    const cardContainer = document.querySelector("#book-card-container"); 
+    const cardContainer = document.querySelector("#book-card-container");
 
     cardContainer.innerHTML = "";
- 
+
     books.forEach((book) => {
       const bookCard = `
-        <div class="  card-container">
-          <div class=" rounded-lg overflow-hidden shadow-custom1">
-            <!-- Cover Image -->
-            <div class="w-full  image-container">
+      <div class="card-container">
+        <div class="rounded-lg overflow-hidden shadow-custom1">
+          <div class="w-full image-container">
             <img class="w-full object-cover object-center card-image !h-[400px]" src="${book.formats["image/jpeg"]}" alt="Book Cover" />
-            </div>
-            
-            <!-- Card Content -->
-            <div class="p-6 d-flex">
-              <h3 class="h3 font-semibold text-primary mb-4 card-title">${book.title}</h3>
-  
-              <!-- Author -->
-              <p class="m-text text-neutral-700 mb-2">
-                <span class="font-semibold">Author:</span> ${book.authors[0]?.name}
-              </p>
-  
-              <!-- Genre (from subjects or bookshelves) -->
-              <p class="m-text text-neutral-700 mb-2">
-                <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0]}
-              </p>
-  
-              <!-- Book ID -->
-              <p class="m-text text-neutral-700 mb-6">
-                <span class="font-semibold">ID:</span> ${book.id}
-              </p>
-  
-              <!-- Call to Action Button -->
-              <a href="${book.formats["text/html"]}" target="_blank" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-md theme-transition-3">
-                Learn More
-              </a>
-            </div>
+          </div>
+          <div class="p-6 d-flex">
+            <h3 class="h3 font-semibold text-primary mb-4 card-title">${book.title}</h3>
+            <p class="m-text text-neutral-700 mb-2">
+              <span class="font-semibold">Author:</span> ${book.authors[0]?.name}
+            </p>
+            <p class="m-text text-neutral-700 mb-2">
+              <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0]}
+            </p>
+            <p class="m-text text-neutral-700 mb-6">
+              <span class="font-semibold">ID:</span> ${book.id}
+            </p>
+            <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
+              View Details
+            </a>
           </div>
         </div>
-      `;
+      </div>
+    `;
 
-     
       cardContainer.innerHTML += bookCard;
     });
   }
+
+  function renderSkeletonCards() {
+    const cardContainer = document.querySelector("#book-card-container");
+    cardContainer.innerHTML = "";
+
+    for (let i = 0; i < 6; i++) {
+      const skeletonCard = `
+          <div class="scalaton-card">
+            <div class="scalaton-card-inner">
+              <div class="scalaton-card-placeholder"></div>
+              <div class="scalaton-card-content">
+                <div class="scalaton-card-title"></div>
+                <div class="scalaton-card-subtitle-1"></div>
+                <div class="scalaton-card-subtitle-2"></div>
+                <div class="scalaton-card-subtitle-3 mb-6"></div>
+                <div class="scalaton-card-footer"></div>
+              </div>
+            </div>
+          </div>`;
+      cardContainer.innerHTML += skeletonCard;
+    }
+  }
+
+  const searchInput = document.querySelector(".search-input");
+  const bookListContainer = document.querySelector("#book-card-container");
+
+  const fetchSearchBookList = async (searchTerm) => {
+    try {
+      const response = await fetch(`https://gutendex.com/books?search=${searchTerm}`);
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.results;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const renderBooks = (books) => {
+    bookListContainer.innerHTML = "";
+
+    if (books.length === 0) {
+      bookListContainer.innerHTML = `<div class="no-data-found-container">
+        <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
+      </div>`;
+      return;
+    }
+
+    books.forEach((book) => {
+      const bookCard = `
+      <div class="card-container">
+        <div class="rounded-lg overflow-hidden shadow-custom1">
+          <div class="w-full image-container">
+            <img class="w-full object-cover object-center card-image !h-[400px]" src="${book.formats["image/jpeg"] || "https://via.placeholder.com/400x250"}" alt="Book Cover" />
+          </div>
+          <div class="p-6 d-flex">
+            <h3 class="h3 font-semibold text-dark mb-4 card-title">${book.title}</h3>
+            <p class="m-text text-neutral-700 mb-2">
+              <span class="font-semibold">Author:</span> ${book.authors[0]?.name || "Unknown"}
+            </p>
+            <p class="m-text text-neutral-700 mb-2">
+              <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0] || "Unknown"}
+            </p>
+            <p class="m-text text-neutral-700 mb-6">
+              <span class="font-semibold">ID:</span> ${book.id}
+            </p>
+            <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+
+      bookListContainer.innerHTML += bookCard;
+    });
+  };
+
+  searchInput.addEventListener("input", (event) => {
+    clearTimeout(searchTimeout);
+    const searchTerm = event.target.value.trim();
+
+    if (searchTerm) {
+      renderSkeletonCards();
+      searchTimeout = setTimeout(async () => {
+        const books = await fetchSearchBookList(searchTerm);
+        renderBooks(books);
+      }, 300);
+    } else {
+      renderBookCards(bookListData.results);
+    }
+  });
+
+  // --------------------------- Pagination ---------------------------
+  const nextPageButton = document.querySelector(".next-btn");
+  const prevPageButton = document.querySelector(".prev-btn");
+  nextPageButton &&
+    nextPageButton.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        fetchBookList(currentPage);
+      }
+    });
 
   let scrollHeight;
   const scrollTopButton = document.querySelector(".scroll-top");

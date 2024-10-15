@@ -14,10 +14,25 @@
   <body class="relative text-black-4">
     <main>
       <nav>
-        <div class="desktop-nav theme-transition-3 bg-dark text-white fixed top-0 z-50 w-full">
-          <div class="transition-primary spy24px container theme-transition-3 hidden w-full items-center justify-between xl:flex">
+        <div class="desktop-nav theme-transition-3 bg-secondary-light shadow-lg text-dark fixed top-0 z-50 w-full">
+          <div class="transition-primary py-4 container theme-transition-3 hidden w-full items-center justify-between xl:flex">
             <div>
-              <a href="/" class="flex items-center"> <img src="./public/images/logo.png" class="w-[80px]" alt="Desktop Logo" /> <span class="text-[60px] font-extrabold">Book</span> </a>
+              <a href="/" class="flex items-center">
+                <img src="./public/images/logo.png" class="w-[50px]" alt="Desktop Logo" /> <span class="text-[40px] font-extrabold">Boo<span class="text-primary">k</span></span>
+              </a>
+            </div>
+
+            <!-- search -->
+
+            <div class="bg-white items-center justify-between flex rounded-full shadow-md duration-300 focus-within:shadow-xl p-2">
+              <input
+                class="font-medium rounded-full py-4 pl-4 text-gray-700 bg-gray-100 leading-tight focus:outline-none w-80 focus:shadow-outline lg:text-sm text-md search-input"
+                type="text"
+                placeholder="Search Your Favorite Book"
+              />
+              <div class="bg-secondary/40 p-2 flex text-[30px] hover:bg-secondary hover:text-white duration-300 cursor-pointer mx-2 rounded-full">
+                <i class="ph ph-magnifying-glass"></i>
+              </div>
             </div>
 
             <!-- Menu Items  start-->
@@ -43,48 +58,45 @@
           </div>
         </div>
       </nav>
-      <div class="container">
-        <div class="grid grid-cols-3 gap-6 mt-40" id="book-card-container">
-          <!-- card -->
-          <div class="card-container my-8 bg-white border border-neutral-700/30 shadow-2xl rounded-t-xl">
-            <div class="rounded-lg overflow-hidden shadow-custom1">
-              <img class="w-full !h-[500px] card-image" src="https://via.placeholder.com/400x250" alt="Book Cover" />
 
-              <div class="p-6">
-                <h3 class="h3 font-semibold text-dark mb-4 card-title">Book Title</h3>
-
-                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Author:</span> <span class="card-author">John Doe</span></p>
-
-                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Genre:</span> <span class="card-genre">Fiction</span></p>
-
-                <p class="m-text text-neutral-700 mb-6"><span class="font-semibold">ID:</span> <span class="card-id">123456</span></p>
-
-                <a href="#" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-md theme-transition-3"> Learn More </a>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="container relative">
+        <div class="grid grid-cols-3 gap-6 mt-40" id="book-card-container"></div>
+      </div>
+      <div class="container flex justify-center items-center gap-2">
+        <button class="prev-btn h4" id="prev-btn">Previous</button>
+        <button class="next-btn h4" id="next-btn">Next</button>
       </div>
     </main>
     <script type="module" src="main.js"></script>
   </body>
 </html>
 
-<!-- card -->
-<!-- <div class="custom-container my-8 bg-white border border-neutral-700/30 shadow-2xl rounded-t-xl">
-  <div class="max-w-sm rounded-lg overflow-hidden shadow-custom1">
-    <img class="w-full" src="https://via.placeholder.com/400x250" alt="Book Cover" />
+<!-- <div class="pagination-container ">
+  <nav class="isolate pagination inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+    <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+      <span class="sr-only">Previous</span>
+      <i class="ph ph-arrow-fat-left"></i>
+    </a>
 
-    <div class="p-6">
-      <h3 class="h3 font-semibold text-dark mb-4">Book Title</h3>
-
-      <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Author:</span> John Doe</p>
-
-      <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Genre:</span> Fiction</p>
-
-      <p class="m-text text-neutral-700 mb-6"><span class="font-semibold">ID:</span> 123456</p>
-
-      <a href="#" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-md theme-transition-3"> Learn More </a>
-    </div>
-  </div>
+    <a
+      href="#"
+      aria-current="page"
+      class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >1</a
+    >
+    <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">2</a>
+    <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
+      >3</a
+    >
+    <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
+    <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
+      >8</a
+    >
+    <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">9</a>
+    <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">10</a>
+    <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+      <span class="sr-only">Next</span>
+      <i class="ph ph-arrow-fat-right"></i>
+    </a>
+  </nav>
 </div> -->
