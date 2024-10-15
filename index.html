@@ -8,6 +8,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <!-- ============ phosphor icons  ============ -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <title>Book Search App</title>
   </head>
   <body class="relative text-black-4">
@@ -43,21 +44,20 @@
         </div>
       </nav>
       <div class="container">
-        <div class="grid grid-cols-3 gap-6 mt-40">
+        <div class="grid grid-cols-3 gap-6 mt-40" id="book-card-container">
           <!-- card -->
-          <div class="custom-container my-8 bg-white border border-neutral-700/30 shadow-2xl rounded-t-xl">
-            <div class="max-w-sm rounded-lg overflow-hidden shadow-custom1">
-              <!-- Cover Image -->
-              <img class="w-full" src="https://via.placeholder.com/400x250" alt="Book Cover" />
+          <div class="card-container my-8 bg-white border border-neutral-700/30 shadow-2xl rounded-t-xl">
+            <div class="rounded-lg overflow-hidden shadow-custom1">
+              <img class="w-full !h-[500px] card-image" src="https://via.placeholder.com/400x250" alt="Book Cover" />
 
               <div class="p-6">
-                <h3 class="h3 font-semibold text-dark mb-4">Book Title</h3>
+                <h3 class="h3 font-semibold text-dark mb-4 card-title">Book Title</h3>
 
-                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Author:</span> John Doe</p>
+                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Author:</span> <span class="card-author">John Doe</span></p>
 
-                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Genre:</span> Fiction</p>
+                <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Genre:</span> <span class="card-genre">Fiction</span></p>
 
-                <p class="m-text text-neutral-700 mb-6"><span class="font-semibold">ID:</span> 123456</p>
+                <p class="m-text text-neutral-700 mb-6"><span class="font-semibold">ID:</span> <span class="card-id">123456</span></p>
 
                 <a href="#" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-md theme-transition-3"> Learn More </a>
               </div>
@@ -69,3 +69,22 @@
     <script type="module" src="main.js"></script>
   </body>
 </html>
+
+<!-- card -->
+<!-- <div class="custom-container my-8 bg-white border border-neutral-700/30 shadow-2xl rounded-t-xl">
+  <div class="max-w-sm rounded-lg overflow-hidden shadow-custom1">
+    <img class="w-full" src="https://via.placeholder.com/400x250" alt="Book Cover" />
+
+    <div class="p-6">
+      <h3 class="h3 font-semibold text-dark mb-4">Book Title</h3>
+
+      <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Author:</span> John Doe</p>
+
+      <p class="m-text text-neutral-700 mb-2"><span class="font-semibold">Genre:</span> Fiction</p>
+
+      <p class="m-text text-neutral-700 mb-6"><span class="font-semibold">ID:</span> 123456</p>
+
+      <a href="#" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-md theme-transition-3"> Learn More </a>
+    </div>
+  </div>
+</div> -->

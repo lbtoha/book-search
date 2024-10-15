@@ -472,3 +472,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .home-one-hero-pattern {
   background-image: url(./public/images/home-one/home-one-banner-shape.png);
 }
+
+.card-container {
+  @apply bg-secondary/20 overflow-hidden rounded-xl bg-white border border-neutral-700/30 w-full shadow-md duration-300 hover:bg-secondary/30 hover:shadow-2xl rounded-t-xl;
+}
+
+.card-title {
+  @apply truncate duration-300 hover:text-clip;
+}
+
+.card-image {
+  height: 300px;
+  object-fit: fill;
+  object-position: center;
+}
+
+.image-container {
+  @apply bg-secondary/30;
+}
