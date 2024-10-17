@@ -473,27 +473,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-image: url(./public/images/home-one/home-one-banner-shape.png);
 }
 
-.card-container {
-  @apply bg-secondary/20 overflow-hidden rounded-xl bg-white border border-neutral-700/30 w-full shadow-md duration-300 hover:bg-secondary/30 hover:shadow-2xl rounded-t-xl;
-}
-
-.card-title {
-  @apply truncate duration-300 hover:text-clip;
-}
-
-.card-image {
-  height: 300px;
-  object-fit: fill;
-  object-position: center;
-}
-
-.image-container {
-  @apply bg-secondary/30;
-}
-
-.primary-btn {
-  @apply rounded-xl border-2 border-dashed border-primary bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_#363aed] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none;
-}
 .no-data-found-container {
   @apply w-full flex flex-col justify-center items-center container top-0 absolute;
 }
@@ -567,4 +546,81 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .pagination-container button.active {
   background-color: #d0d0d0;
   color: black;
+}
+
+/* Card container */
+.card-container {
+  @apply bg-secondary/20 overflow-hidden rounded-xl bg-white border border-neutral-700/30 w-full shadow-md duration-300 hover:bg-secondary/30 hover:shadow-2xl rounded-t-xl pb-6 h-full;
+}
+
+.card-inner {
+  @apply flex flex-col justify-between h-full;
+}
+
+/* Image container */
+.image-container {
+  @apply w-full bg-secondary/30 !h-[300px];
+}
+
+.card-image {
+  @apply object-scale-down w-full object-center !h-[300px];
+}
+
+/* Card content */
+.card-content {
+  @apply w-full p-6 flex flex-col justify-between h-full;
+}
+
+.card-info {
+  @apply h-full;
+}
+
+.card-title {
+  @apply h3 font-semibold text-dark mb-4;
+}
+
+.card-text {
+  @apply m-text h5 text-neutral-700;
+}
+
+.card-subtitle {
+  @apply mb-2 h5;
+}
+
+.card-subtitle span {
+  @apply font-semibold text-dark;
+}
+
+.card-id {
+  @apply mb-6 h5;
+}
+
+.card-container {
+  @apply bg-secondary/20 overflow-hidden rounded-xl bg-white border border-neutral-700/30 w-full shadow-md duration-300 hover:bg-secondary/30 hover:shadow-2xl rounded-t-xl pb-6;
+}
+
+.card-title {
+  @apply truncate duration-300 hover:text-clip;
+}
+
+.primary-btn {
+  @apply rounded-xl border-2 block border-dashed h5 w-fit border-primary bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_#363aed] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none;
+}
+
+/* Filter Dropdown */
+.show {
+  @apply visible scale-100 origin-top opacity-100;
+}
+
+.hide {
+  @apply invisible origin-top scale-0 opacity-0;
+}
+
+.active {
+  background-color: #ffbe46;
+  color: white !important;
+  color: #102737 !important;
+}
+.truncate-select-text span {
+  @apply truncate w-full text-white l-text text-left;
 }

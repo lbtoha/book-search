@@ -35,15 +35,11 @@ export default {
         primary: "#363aed",
         secondary: "#37d279",
         tertiary: "#ffbe46",
-        "bg-1": "#f9f9fe",
-        "bg-2": "#f5f5fe",
-        "btn-bg": "#efeffd",
-        border: "#c2c7d0",
-        "neutral-700": "#243757",
         "primary-light": "#ececfd",
         "secondary-light": "#eafbf1",
         "secondary-500": "#22804a",
         dark: "#091e42",
+        dark2: "#102737",
       },
 
       backgroundImage: {

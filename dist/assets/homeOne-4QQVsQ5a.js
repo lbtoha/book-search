@@ -1,39 +1,68 @@
-"user strict";
-import "./style.css";
-
-document.addEventListener("DOMContentLoaded", function () {
+(function polyfill() {
+  const relList = document.createElement("link").relList;
+  if (relList && relList.supports && relList.supports("modulepreload")) {
+    return;
+  }
+  for (const link of document.querySelectorAll('link[rel="modulepreload"]')) {
+    processPreload(link);
+  }
+  new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type !== "childList") {
+        continue;
+      }
+      for (const node of mutation.addedNodes) {
+        if (node.tagName === "LINK" && node.rel === "modulepreload")
+          processPreload(node);
+      }
+    }
+  }).observe(document, { childList: true, subtree: true });
+  function getFetchOpts(link) {
+    const fetchOpts = {};
+    if (link.integrity)
+      fetchOpts.integrity = link.integrity;
+    if (link.referrerPolicy)
+      fetchOpts.referrerPolicy = link.referrerPolicy;
+    if (link.crossOrigin === "use-credentials")
+      fetchOpts.credentials = "include";
+    else if (link.crossOrigin === "anonymous")
+      fetchOpts.credentials = "omit";
+    else
+      fetchOpts.credentials = "same-origin";
+    return fetchOpts;
+  }
+  function processPreload(link) {
+    if (link.ep)
+      return;
+    link.ep = true;
+    const fetchOpts = getFetchOpts(link);
+    fetch(link.href, fetchOpts);
+  }
+})();
+document.addEventListener("DOMContentLoaded", function() {
   let bookListData = [];
   let searchTimeout;
-
   async function fetchBookList() {
     const endPoint = "https://gutendex.com/books";
-
     renderSkeletonCards();
     try {
       const response = await fetch(endPoint);
-
       if (!response.ok) {
         throw new Error(`Error! status: ${response.status}`);
       }
       bookListData = await response.json();
       console.log({ bookListData });
-
-      extractGenres(bookListData.results);
       renderBookCards(bookListData.results);
-      renderGenreDropdown();
     } catch (error) {
       console.error(error);
     }
   }
-
   fetchBookList();
-
   function renderBookCards(books) {
     const cardContainer = document.querySelector("#book-card-container");
-
     cardContainer.innerHTML = "";
-
     books.forEach((book) => {
+      var _a;
       const bookCard = `
       <div class="card-container">
         <div class="card-inner">
@@ -44,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="card-info">
             <h3 class="card-title">${book.title}</h3>
             <p class="card-text card-subtitle">
-              <span class="font-semibold">Author:</span> ${book.authors[0]?.name}
+              <span class="font-semibold">Author:</span> ${(_a = book.authors[0]) == null ? void 0 : _a.name}
             </p>
             <p class="card-text card-subtitle">
               <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0]}
@@ -60,15 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       </div>
     `;
-
       cardContainer.innerHTML += bookCard;
     });
   }
-
   function renderSkeletonCards() {
     const cardContainer = document.querySelector("#book-card-container");
     cardContainer.innerHTML = "";
-
     for (let i = 0; i < 6; i++) {
       const skeletonCard = `
           <div class="scalaton-card">
@@ -86,10 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
       cardContainer.innerHTML += skeletonCard;
     }
   }
-
   const searchInput = document.querySelector(".search-input");
   const bookListContainer = document.querySelector("#book-card-container");
-
   const fetchSearchBookList = async (searchTerm) => {
     try {
       const response = await fetch(`https://gutendex.com/books?search=${searchTerm}`);
@@ -103,18 +127,16 @@ document.addEventListener("DOMContentLoaded", function () {
       return [];
     }
   };
-
   const renderBooks = (books) => {
     bookListContainer.innerHTML = "";
-
     if (books.length === 0) {
       bookListContainer.innerHTML = `<div class="no-data-found-container">
         <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
       </div>`;
       return;
     }
-
     books.forEach((book) => {
+      var _a;
       const bookCard = `
       <div class="card-container">
         <div class="rounded-lg overflow-hidden shadow-custom1">
@@ -124,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="p-6 d-flex">
             <h3 class="h3 font-semibold text-dark mb-4 card-title">${book.title}</h3>
             <p class="m-text text-neutral-700 mb-2">
-              <span class="font-semibold">Author:</span> ${book.authors[0]?.name || "Unknown"}
+              <span class="font-semibold">Author:</span> ${((_a = book.authors[0]) == null ? void 0 : _a.name) || "Unknown"}
             </p>
             <p class="m-text text-neutral-700 mb-2">
               <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0] || "Unknown"}
@@ -139,15 +161,12 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       </div>
     `;
-
       bookListContainer.innerHTML += bookCard;
     });
   };
-
   searchInput.addEventListener("input", (event) => {
     clearTimeout(searchTimeout);
     const searchTerm = event.target.value.trim();
-
     if (searchTerm) {
       renderSkeletonCards();
       searchTimeout = setTimeout(async () => {
@@ -158,12 +177,9 @@ document.addEventListener("DOMContentLoaded", function () {
       renderBookCards(bookListData.results);
     }
   });
-
-  // filter dropdown
   function toggleDropdown(btnId, dropdownId) {
     const dropdownBtn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
-
     if (dropdown.classList.contains("hide")) {
       dropdown.classList.remove("hide");
       dropdown.classList.add("show");
@@ -173,11 +189,9 @@ document.addEventListener("DOMContentLoaded", function () {
       dropdown.classList.remove("show");
       document.removeEventListener("click", closeDropdownOutside);
     }
-
     function closeDropdownOutside(event) {
       const isClickedInsideDropdown = dropdown.contains(event.target);
       const isClickedOnDropdownBtn = dropdownBtn.contains(event.target);
-
       if (!isClickedInsideDropdown && !isClickedOnDropdownBtn) {
         dropdown.classList.add("hide");
         dropdown.classList.remove("show");
@@ -193,7 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
-
   function dropdownActive(btnId, dropdownId) {
     const dropdownBtn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
@@ -201,7 +214,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (dropdown) {
       dropdownList = dropdown.querySelectorAll("li");
     }
-
     if (dropdownList) {
       dropdownList.forEach((item) => {
         item.addEventListener("click", (event) => {
@@ -209,117 +221,51 @@ document.addEventListener("DOMContentLoaded", function () {
             otherItem.classList.remove("active");
           });
           dropdownBtn.querySelector("span").innerText = item.innerText;
-
           item.classList.add("active");
-
           toggleDropdown(btnId, dropdownId);
-
           event.stopPropagation();
         });
       });
     }
   }
-
-  // Use Filter Dropdown
-  const languageBtn = document.getElementById("genre-btn");
-
-  languageBtn && languageBtn.addEventListener("click", () => toggleDropdown("genre-btn", "genre-dropdown"));
-
-  dropdownActive("genre-btn", "genre-dropdown");
-
-  // --------------------------- Pagination ---------------------------
+  const languageBtn = document.getElementById("language-btn");
+  languageBtn && languageBtn.addEventListener("click", () => toggleDropdown("language-btn", "language"));
+  dropdownActive("language-btn", "language");
   const nextPageButton = document.querySelector(".next-btn");
-  const prevPageButton = document.querySelector(".prev-btn");
-  nextPageButton &&
-    nextPageButton.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        fetchBookList(currentPage);
-      }
-    });
-
-  let genres = new Set(); // Store unique genres
-
-  // Function to extract unique genres from the book list
-  function extractGenres(books) {
-    books.forEach((book) => {
-      const genre = book.subjects[0] || book.bookshelves[0];
-      if (genre) {
-        genres.add(genre);
-      }
-    });
-  }
-
-  // Function to render the genre dropdown
-  function renderGenreDropdown() {
-    const genreList = document.querySelector("#genre-dropdown ul");
-    let genreItems = "";
-
-    genres.forEach((genre) => {
-      genreItems += `<li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-dark2 hover:bg-tertiary">${genre}</li>`;
-    });
-
-    genreList.innerHTML += genreItems;
-
-    // Add event listener for filtering by genre
-    genreList.querySelectorAll("li").forEach((item) => {
-      item.addEventListener("click", function () {
-        const selectedGenre = this.innerText;
-        const genreBtn = document.getElementById("genre-btn");
-        genreBtn.querySelector("span").innerText = selectedGenre;
-
-        if (selectedGenre === "All Genres") {
-          renderBookCards(bookListData.results);
-        } else {
-          const filteredBooks = bookListData.results.filter((book) => {
-            return (book.subjects[0] || book.bookshelves[0]) === selectedGenre;
-          });
-          renderBookCards(filteredBooks);
-        }
-
-        toggleDropdown("genre-btn", "genre-dropdown");
-      });
-    });
-  }
-
-  fetchBookList().then(() => {
-    extractGenres(bookListData.results);
-    renderGenreDropdown();
+  document.querySelector(".prev-btn");
+  nextPageButton && nextPageButton.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      fetchBookList(currentPage);
+    }
   });
-
   let scrollHeight;
   const scrollTopButton = document.querySelector(".scroll-top");
-
-  // menu
-  window.addEventListener("scroll", function () {
+  window.addEventListener("scroll", function() {
     scrollHeight = window.scrollY;
     const desktopNav = document.querySelector(".desktop-nav");
     const loginButton = document.querySelector(".home-three-login");
-
     if (scrollHeight > 50) {
-      desktopNav?.classList.add("bg-white-1");
-      loginButton?.classList.remove("text-white-1");
-      loginButton?.classList.add("text-black-4");
+      desktopNav == null ? void 0 : desktopNav.classList.add("bg-white-1");
+      loginButton == null ? void 0 : loginButton.classList.remove("text-white-1");
+      loginButton == null ? void 0 : loginButton.classList.add("text-black-4");
     } else {
-      loginButton?.classList.remove("text-black-4");
-      loginButton?.classList.add("text-white-1");
-      desktopNav?.classList.remove("bg-white-1");
+      loginButton == null ? void 0 : loginButton.classList.remove("text-black-4");
+      loginButton == null ? void 0 : loginButton.classList.add("text-white-1");
+      desktopNav == null ? void 0 : desktopNav.classList.remove("bg-white-1");
     }
-
     if (scrollHeight > 500) {
-      scrollTopButton?.classList.add("opacity-1");
-      scrollTopButton?.classList.add("visible");
-      scrollTopButton?.classList.remove("invisible");
-      scrollTopButton?.classList.remove("opacity-0");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("opacity-1");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("visible");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("invisible");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("opacity-0");
     } else {
-      scrollTopButton?.classList.remove("opacity-1");
-      scrollTopButton?.classList.remove("visible");
-      scrollTopButton?.classList.add("invisible");
-      scrollTopButton?.classList.add("opacity-0");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("opacity-1");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("visible");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("invisible");
+      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("opacity-0");
     }
   });
-
-  // Get the current page URL
   const currentUrl = window.location.pathname;
   let withoutSlash;
   if (currentUrl.length > 1) {
@@ -327,40 +273,28 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     withoutSlash = currentUrl;
   }
-
   const singleMenu = document.querySelectorAll(".single-menu");
-  // Get all menu items
   const menuItems = document.querySelectorAll(".menu li a");
-
   menuItems.forEach((item) => {
     const menuItemUrl = item.getAttribute("href");
-
     if (withoutSlash === menuItemUrl) {
       item.parentElement.classList.add("active-nav");
-
       item.parentElement.parentElement.parentElement.querySelector("li p").classList.add("parent-nav-active");
       item.parentElement.classList.add("parent-nav-active");
     }
   });
-
   singleMenu.forEach((item) => {
     const menuItemUrl = item.getAttribute("href");
-
     if (withoutSlash === menuItemUrl) {
       item.classList.add("parent-nav-active");
     }
   });
-
-  // mobile menu
   const menuToggleButton = document.querySelector(".mobile-nav-toggle");
   const mobileMenuOverlay = document.querySelector(".sidebar-overlay");
-
   menuToggleButton && menuToggleButton.addEventListener("click", sidebarToggle);
   mobileMenuOverlay && mobileMenuOverlay.addEventListener("click", sidebarToggle);
-
   function sidebarToggle() {
     const menuSidebar = document.querySelector(".menu-sidebar");
-
     menuSidebar.classList.forEach((item) => {
       if (item === "menu-sidebar-active") {
         menuSidebar.classList.remove("menu-sidebar-active");
@@ -368,7 +302,6 @@ document.addEventListener("DOMContentLoaded", function () {
         menuSidebar.classList.add("menu-sidebar-active");
       }
     });
-
     mobileMenuOverlay.classList.forEach((item) => {
       if (item === "menu-sidebar-overlay-active") {
         mobileMenuOverlay.classList.remove("menu-sidebar-overlay-active");
@@ -377,38 +310,30 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
   const mobileNavListParent = document.querySelectorAll(".mobile-nav-dropdown");
-
   const allList = document.querySelectorAll(".mobile-menu-container .mobile-nav-list");
-
   mobileNavListParent.forEach((item) => {
-    item.addEventListener("click", function () {
-      allList.forEach((item) => {
-        item.classList.remove("mobile-nav-list-active");
+    item.addEventListener("click", function() {
+      allList.forEach((item2) => {
+        item2.classList.remove("mobile-nav-list-active");
       });
-
       const mobileNavList = item.querySelector(".mobile-nav-list");
       mobileNavList.classList.toggle("mobile-nav-list-active");
     });
   });
-
   const mobileMenus = document.querySelectorAll(".mobile-nav-list-parent");
-
   mobileMenus.forEach((mobileMenu) => {
     const mobileMenuItems = mobileMenu.nextElementSibling.querySelectorAll(".mobile-nav-item a");
-
     mobileMenuItems.forEach((item) => {
       const menuItemUrl = item.getAttribute("href");
-      const currentUrl = window.location.pathname;
-      let withoutSlash;
-      if (currentUrl.length > 1) {
-        withoutSlash = currentUrl.split("/")[1];
+      const currentUrl2 = window.location.pathname;
+      let withoutSlash2;
+      if (currentUrl2.length > 1) {
+        withoutSlash2 = currentUrl2.split("/")[1];
       } else {
-        withoutSlash = currentUrl;
+        withoutSlash2 = currentUrl2;
       }
-
-      if (withoutSlash === menuItemUrl) {
+      if (withoutSlash2 === menuItemUrl) {
         item.parentElement.classList.add("mobile-nav-active");
         mobileMenu.classList.add("parent-nav-active");
       }
