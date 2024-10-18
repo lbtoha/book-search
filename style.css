@@ -606,9 +606,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* wishlist */
 .wishlist-btn {
-  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-red-500 size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium w-fit absolute right-4 top-4 z-10 ;
+  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-red-500 size-10 xl:size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium  absolute right-4 top-4 z-10 ;
 }
 
 .wishlist-btn.wishlist-btn-active {
   @apply text-red-500 bg-tertiary hover:bg-dark2;
+}
+
+.navbar-active {
+  @apply  shadow-lg backdrop-blur-xl font-medium backdrop-filter text-dark;
 }
