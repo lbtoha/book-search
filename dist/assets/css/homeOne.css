@@ -654,20 +654,20 @@ button,
   display: none;
 }
 
-.w-32{
-  width: 8rem;
+.h-\[400px\]{
+  height: 400px;
 }
 
-.w-80{
-  width: 20rem;
+.h-full{
+  height: 100%;
 }
 
 .w-\[50px\]{
   width: 50px;
 }
 
-.w-\[70\%\]{
-  width: 70%;
+.w-\[60\%\]{
+  width: 60%;
 }
 
 .w-full{
@@ -731,12 +731,20 @@ button,
   gap: 1.5rem;
 }
 
+.overflow-y-auto{
+  overflow-y: auto;
+}
+
 .rounded-3xl{
   border-radius: 1.5rem;
 }
 
 .rounded-full{
   border-radius: 9999px;
+}
+
+.rounded-lg{
+  border-radius: 0.5rem;
 }
 
 .rounded-md{
@@ -773,6 +781,11 @@ button,
 .px-4{
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.px-6{
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .py-2{
@@ -821,11 +834,6 @@ button,
   line-height: 1.25;
 }
 
-.text-dark{
-  --tw-text-opacity: 1;
-  color: rgb(9 30 66 / var(--tw-text-opacity));
-}
-
 .text-gray-700{
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
@@ -858,12 +866,6 @@ button,
 .shadow-\[0px_6px_30px_0px_rgba\(0\2c 0\2c 0\2c 0\.08\)\]{
   --tw-shadow: 0px 6px 30px 0px rgba(0,0,0,0.08);
   --tw-shadow-colored: 0px 6px 30px 0px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-md{
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -1000,6 +1002,25 @@ button,
   }
 }
 
+.xl-text{
+  font-size: 16px;
+  line-height: 150%;
+}
+
+@media (min-width: 992px){
+
+  .xl-text{
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1400px){
+
+  .xl-text{
+    font-size: 20px;
+  }
+}
+
 .l-text{
   font-size: 16px;
   line-height: 150%;
@@ -1010,11 +1031,6 @@ button,
   .l-text{
     font-size: 18px;
   }
-}
-
-.m-text{
-  font-size: 16px;
-  line-height: 150%;
 }
 
 /*================ typography classes end ================ */
@@ -1185,7 +1201,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 ::-webkit-scrollbar {
   width: 6px;
-  background-color: #005655;
+  background-color: #ffbe46;
 }
 
 .cart-scrollbar::-webkit-scrollbar {
@@ -1193,7 +1209,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #005655;
+  background-color: #ffbe46;
   border-radius: 10px;
   width: 2px;
 }
@@ -1206,7 +1222,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .navbar-dropdown-scrollbar::-webkit-scrollbar {
   width: 3px;
-  background-color: #005655;
+  background-color: #ffbe46;
 }
 
 /* mobile-menu-scrollbar */
@@ -1867,6 +1883,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .show{
   visibility: visible;
+  transform-origin: top;
   --tw-scale-x: 1;
   --tw-scale-y: 1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1875,6 +1892,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .hide{
   visibility: hidden;
+  transform-origin: top;
   --tw-scale-x: 0;
   --tw-scale-y: 0;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1882,13 +1900,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .active {
-  --tw-bg-opacity: 1;
   background-color: #ffbe46;
   color: white !important;
+  color: #102737 !important;
 }
 
-.active:hover {
-  color: white !important;
+.truncate-select-text span{
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+  font-size: 16px;
+  line-height: 150%;
+}
+
+@media (min-width: 1400px){
+
+  .truncate-select-text span{
+    font-size: 18px;
+  }
 }
 
 .before\:theme-transition-3::before{
@@ -1936,6 +1969,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .hover\:bg-secondary:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(55 210 121 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-tertiary:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 190 70 / var(--tw-bg-opacity));
+}
+
+.hover\:text-dark2:hover{
+  --tw-text-opacity: 1;
+  color: rgb(16 39 55 / var(--tw-text-opacity));
 }
 
 .hover\:text-primary:hover{

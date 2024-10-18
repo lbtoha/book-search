@@ -52,7 +52,9 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       bookListData = await response.json();
       console.log({ bookListData });
+      extractGenres(bookListData.results);
       renderBookCards(bookListData.results);
+      renderGenreDropdown();
     } catch (error) {
       console.error(error);
     }
@@ -228,9 +230,9 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
   }
-  const languageBtn = document.getElementById("language-btn");
-  languageBtn && languageBtn.addEventListener("click", () => toggleDropdown("language-btn", "language"));
-  dropdownActive("language-btn", "language");
+  const languageBtn = document.getElementById("genre-btn");
+  languageBtn && languageBtn.addEventListener("click", () => toggleDropdown("genre-btn", "genre-dropdown"));
+  dropdownActive("genre-btn", "genre-dropdown");
   const nextPageButton = document.querySelector(".next-btn");
   document.querySelector(".prev-btn");
   nextPageButton && nextPageButton.addEventListener("click", () => {
@@ -238,6 +240,43 @@ document.addEventListener("DOMContentLoaded", function() {
       currentPage++;
       fetchBookList(currentPage);
     }
+  });
+  let genres = /* @__PURE__ */ new Set();
+  function extractGenres(books) {
+    books.forEach((book) => {
+      const genre = book.subjects[0] || book.bookshelves[0];
+      if (genre) {
+        genres.add(genre);
+      }
+    });
+  }
+  function renderGenreDropdown() {
+    const genreList = document.querySelector("#genre-dropdown ul");
+    let genreItems = "";
+    genres.forEach((genre) => {
+      genreItems += `<li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-dark2 hover:bg-tertiary">${genre}</li>`;
+    });
+    genreList.innerHTML += genreItems;
+    genreList.querySelectorAll("li").forEach((item) => {
+      item.addEventListener("click", function() {
+        const selectedGenre = this.innerText;
+        const genreBtn = document.getElementById("genre-btn");
+        genreBtn.querySelector("span").innerText = selectedGenre;
+        if (selectedGenre === "All Genres") {
+          renderBookCards(bookListData.results);
+        } else {
+          const filteredBooks = bookListData.results.filter((book) => {
+            return (book.subjects[0] || book.bookshelves[0]) === selectedGenre;
+          });
+          renderBookCards(filteredBooks);
+        }
+        toggleDropdown("genre-btn", "genre-dropdown");
+      });
+    });
+  }
+  fetchBookList().then(() => {
+    extractGenres(bookListData.results);
+    renderGenreDropdown();
   });
   let scrollHeight;
   const scrollTopButton = document.querySelector(".scroll-top");

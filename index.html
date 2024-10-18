@@ -75,9 +75,7 @@
               id="genre-dropdown"
               class="hide absolute top-full z-[300] rounded-md w-full bg-dark2 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left h-[400px] overflow-y-auto"
             >
-              <ul class="flex w-full flex-col rounded-md bg-neutral-n0 p-1">
-                <li class="active block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-dark2 hover:bg-tertiary">All Genres</li>
-              </ul>
+              <ul class="flex w-full flex-col rounded-md bg-neutral-n0 p-1"></ul>
             </div>
           </div>
         </div>
@@ -86,11 +84,42 @@
       <div class="container relative">
         <div class="grid grid-cols-3 gap-6 mt-40" id="book-card-container"></div>
       </div>
-      <div class="container flex justify-center items-center gap-2">
-        <button class="prev-btn h4" id="prev-btn">Previous</button>
-        <button class="next-btn h4" id="next-btn">Next</button>
+      <div class="container flex justify-center items-center gap-6 spt60px spb120px">
+        <button class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark hover:bg-tertiary group duration-300 rounded-lg" id="prev-btn">
+          <span class="p-2 bg-tertiary group-hover:bg-white rounded-full flex items-center previous-page text-dark"> <i class="ph-bold text-dark text-[24px] ph-caret-left"> </i> </span>
+          <span>Previous</span>
+        </button>
+        <button
+          class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark size-14 rounded-full hover:bg-tertiary group duration-300 justify-center font-medium first-page-btn"
+        >
+          1
+        </button>
+        <button
+          class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark size-14 rounded-full hover:bg-tertiary group duration-300 justify-center font-medium second-page-btn"
+        >
+          2
+        </button>
+        <div class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 size-14 rounded-full duration-300 justify-center font-medium">...</div>
+        <button
+          class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark size-14 rounded-full hover:bg-tertiary group duration-300 justify-center font-medium tenth-page-btn"
+        >
+          10
+        </button>
+        <button class="next-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark hover:bg-tertiary group duration-300 rounded-lg" id="next-btn">
+          <span>Next</span> <span class="p-2 bg-tertiary text-dark group-hover:bg-white rounded-full flex items-center next-page"> <i class="ph-bold text-[24px] ph-caret-right"></i> </span>
+        </button>
       </div>
     </main>
     <script type="module" src="main.js"></script>
   </body>
 </html>
+
+<!-- 
+
+
+
+  fetchBookList().then(() => {
+    extractGenres(bookListData.results);
+    renderGenreDropdown();
+  });
+-->
