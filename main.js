@@ -4,8 +4,8 @@ import "./style.css";
 document.addEventListener("DOMContentLoaded", function () {
   let bookListData = [];
   let searchTimeout;
-  let currentPage = 1;
-  let totalPages;
+  // let currentPage = 1;
+  // let totalPages;
   let genres = new Set();
   let prevUrl;
   let nextUrl;
@@ -35,9 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
       extractGenres(bookListData.results);
       renderBookCards(bookListData.results);
       renderGenreDropdown();
-      totalPages = bookListData.count;
+      // totalPages = bookListData.count;
       prevUrl = bookListData.previous;
       nextUrl = bookListData.next;
+      pagination();
     } catch (error) {
       console.error(error);
     }
@@ -129,6 +130,108 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // --------------------------- Pagination ---------------------------
+  function pagination() {
+    const nextPageNumber = nextUrl ? parseInt(nextUrl.split("page=")[1]) : 1;
+    const paginationEndPoints = [];
+    let currentPage;
+
+    if (nextPageNumber <= 3) {
+      currentPage = 1;
+    } else if (nextPageNumber <= 4) {
+      currentPage = 3;
+    } else {
+      const groupIndex = Math.floor((nextPageNumber - 5) / 2);
+      currentPage = 5 + groupIndex * 2;
+      console.log({ groupIndex });
+    }
+
+    // Generate endpoints
+    for (let i = currentPage; i < currentPage + 3; i++) {
+      if (i === currentPage) {
+        paginationEndPoints.push(generateUrl(i));
+      } else if (i === currentPage + 1) {
+        paginationEndPoints.push(generateUrl(i));
+      } else {
+        // Calculate last number based on current group
+        let lastNumber;
+        if (currentPage === 1) {
+          lastNumber = 10;
+        } else if (currentPage === 3) {
+          lastNumber = 12;
+        } else {
+          lastNumber = currentPage + 10;
+        }
+        paginationEndPoints.push(generateUrl(lastNumber));
+      }
+    }
+
+    const paginationContainer = document.querySelector(".pagination-container");
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = "";
+
+    paginationEndPoints.forEach((url, index) => {
+      if (index == 0) {
+        const pageButton = `
+                <button class="pagination-btn">
+                    ${currentPage}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      } else if (index == 1) {
+        const pageButton = `
+                <button class="pagination-btn">
+                    ${currentPage + 1}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      } else {
+        // Calculate last button number
+        let lastNumber;
+        if (currentPage === 1) {
+          lastNumber = 10;
+        } else if (currentPage === 3) {
+          lastNumber = 12;
+        } else {
+          lastNumber = currentPage + 10;
+        }
+
+        const pageButton = `
+                <div class="pagination-dots">...</div>
+                <button class="pagination-btn">
+                    ${lastNumber}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      }
+    });
+    console.log({ paginationEndPoints, currentPage,nextPageNumber });
+    const newButtons = paginationContainer.querySelectorAll(".pagination-btn");
+    newButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        fetchBookList(paginationEndPoints[index]);
+      });
+    });
+  }
+
+  const nextPageButton = document.querySelector(".next-btn");
+  const prevPageButton = document.querySelector(".prev-btn");
+
+  prevPageButton &&
+    prevPageButton.addEventListener("click", () => {
+      if (prevUrl && prevUrl !== null) {
+        fetchBookList(prevUrl);
+      }
+    });
+
+  nextPageButton &&
+    nextPageButton.addEventListener("click", () => {
+      if (nextUrl && nextUrl !== null) {
+        fetchBookList(nextUrl);
+      }
+    });
+
   // filter dropdown
   function toggleDropdown(btnId, dropdownId) {
     const dropdownBtn = document.getElementById(btnId);
@@ -196,65 +299,6 @@ document.addEventListener("DOMContentLoaded", function () {
   genreBtn && genreBtn.addEventListener("click", () => toggleDropdown("genre-btn", "genre-dropdown"));
 
   dropdownActive("genre-btn", "genre-dropdown");
-
-  // --------------------------- Pagination ---------------------------
-  function pagination ()  {
-
-  }
-  const nextPageButton = document.querySelector(".next-btn");
-  const prevPageButton = document.querySelector(".prev-btn");
-  const firstPageButton = document.querySelector(".first-page-btn");
-  const secondPageButton = document.querySelector(".second-page-btn");
-  const nthPageButton = document.querySelector(".tenth-page-btn");
-
-  function updateButtonNumbers() {
-    firstPageButton.innerHTML = currentPage;
-    secondPageButton.innerHTML = currentPage + 1;
-    nthPageButton.innerHTML = currentPage + 10;
-  }
-
-  prevPageButton &&
-    prevPageButton.addEventListener("click", () => {
-      if (prevUrl && prevUrl !== null) {
-        fetchBookList(prevUrl);
-      }
-    });
-
-  nextPageButton &&
-    nextPageButton.addEventListener("click", () => {
-      if (condition && nextUrl && nextUrl !== null) {
-        fetchBookList(nextUrl);
-      }
-    });
-
-  firstPageButton &&
-    firstPageButton.addEventListener("click", () => {
-      if (currentPage < totalPages && currentPage >= 1) {
-        currentPage = currentPage + 1;
-        fetchBookList(currentPage);
-        updateButtonNumbers();
-      }
-    });
-
-  secondPageButton &&
-    secondPageButton.addEventListener("click", () => {
-      if (currentPage < totalPages && currentPage >= 1) {
-        currentPage = currentPage + 2;
-        fetchBookList(currentPage);
-        updateButtonNumbers();
-      }
-    });
-
-  nthPageButton &&
-    nthPageButton.addEventListener("click", () => {
-      if (currentPage < totalPages && currentPage >= 1) {
-        currentPage = currentPage + 10;
-        fetchBookList(currentPage);
-        updateButtonNumbers();
-      }
-    });
-
-  // nextPageButton.querySelector(".next-page").innerHTML = currentPage;
 
   // Function to extract unique genres from the book list
   function extractGenres(books) {
