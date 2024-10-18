@@ -638,10 +638,6 @@ button,
   margin-top: 10rem;
 }
 
-.block{
-  display: block;
-}
-
 .flex{
   display: flex;
 }
@@ -652,6 +648,11 @@ button,
 
 .hidden{
   display: none;
+}
+
+.size-14{
+  width: 3.5rem;
+  height: 3.5rem;
 }
 
 .h-\[400px\]{
@@ -765,6 +766,11 @@ button,
   background-color: rgb(55 210 121 / 0.4);
 }
 
+.bg-tertiary{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 190 70 / var(--tw-bg-opacity));
+}
+
 .bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
@@ -810,6 +816,10 @@ button,
   text-align: center;
 }
 
+.text-\[24px\]{
+  font-size: 24px;
+}
+
 .text-\[30px\]{
   font-size: 30px;
 }
@@ -832,6 +842,11 @@ button,
 
 .leading-tight{
   line-height: 1.25;
+}
+
+.text-dark{
+  --tw-text-opacity: 1;
+  color: rgb(9 30 66 / var(--tw-text-opacity));
 }
 
 .text-gray-700{
@@ -1037,6 +1052,31 @@ button,
 
 /*================ padding classes start ================ */
 
+.spb120px{
+  padding-bottom: 60px;
+}
+
+@media (min-width: 768px){
+
+  .spb120px{
+    padding-bottom: 5rem;
+  }
+}
+
+@media (min-width: 1200px){
+
+  .spb120px{
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 1400px){
+
+  .spb120px{
+    padding-bottom: 120px;
+  }
+}
+
 .spy60px{
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -1063,6 +1103,31 @@ button,
   .spy60px{
     padding-top: 60px;
     padding-bottom: 60px;
+  }
+}
+
+.spt60px{
+  padding-top: 2rem;
+}
+
+@media (min-width: 768px){
+
+  .spt60px{
+    padding-top: 2.5rem;
+  }
+}
+
+@media (min-width: 1200px){
+
+  .spt60px{
+    padding-top: 3rem;
+  }
+}
+
+@media (min-width: 1400px){
+
+  .spt60px{
+    padding-top: 60px;
   }
 }
 
@@ -1593,61 +1658,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 1.5rem;
 }
 
-/* Pagination */
-
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.pagination-container button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination-container button:disabled {
-  background-color: #b0b0b0;
-  cursor: not-allowed;
-}
-
-.pagination-container button.active {
-  background-color: #d0d0d0;
-  color: black;
-}
-
 /* Card container */
-
-.card-container{
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 0.75rem;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  border-width: 1px;
-  border-color: rgb(64 64 64 / 0.3);
-  background-color: rgb(55 210 121 / 0.2);
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-bottom: 1.5rem;
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  transition-duration: 300ms;
-}
-
-.card-container:hover{
-  background-color: rgb(55 210 121 / 0.3);
-  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
 
 .card-inner{
   display: flex;
@@ -1794,7 +1805,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: rgb(55 210 121 / 0.2);
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-bottom: 1.5rem;
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
@@ -1924,6 +1934,107 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
+/* .prev-btn:disabled,
+.next-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+} */
+
+/* pagination */
+
+.pagination-btn{
+  display: flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(16 39 55 / var(--tw-bg-opacity));
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-weight: 500;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+  transition-duration: 300ms;
+  font-size: 16px;
+  line-height: 130%;
+}
+
+@media (min-width: 992px){
+
+  .pagination-btn{
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1200px){
+
+  .pagination-btn{
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1400px){
+
+  .pagination-btn{
+    font-size: 24px;
+  }
+}
+
+.pagination-btn:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 190 70 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(9 30 66 / var(--tw-text-opacity));
+}
+
+.pagination-dots{
+  display: flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(16 39 55 / var(--tw-bg-opacity));
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-weight: 500;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+  transition-duration: 300ms;
+  font-size: 16px;
+  line-height: 130%;
+}
+
+@media (min-width: 992px){
+
+  .pagination-dots{
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1200px){
+
+  .pagination-dots{
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1400px){
+
+  .pagination-dots{
+    font-size: 24px;
+  }
+}
+
 .before\:theme-transition-3::before{
   content: var(--tw-content);
   transition: all 0.3s ease-in-out;
@@ -1976,9 +2087,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: rgb(255 190 70 / var(--tw-bg-opacity));
 }
 
-.hover\:text-dark2:hover{
+.hover\:text-dark:hover{
   --tw-text-opacity: 1;
-  color: rgb(16 39 55 / var(--tw-text-opacity));
+  color: rgb(9 30 66 / var(--tw-text-opacity));
 }
 
 .hover\:text-primary:hover{
@@ -1999,6 +2110,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .focus\:outline-none:focus{
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.group:hover .group-hover\:bg-white{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 @media (min-width: 992px){

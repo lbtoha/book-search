@@ -42,11 +42,23 @@
 document.addEventListener("DOMContentLoaded", function() {
   let bookListData = [];
   let searchTimeout;
-  async function fetchBookList() {
-    const endPoint = "https://gutendex.com/books";
+  let genres = /* @__PURE__ */ new Set();
+  let prevUrl;
+  let nextUrl;
+  const endPoint = "https://gutendex.com/books";
+  const searchInput = document.querySelector(".search-input");
+  const bookListContainer = document.querySelector("#book-card-container");
+  function generateUrl(pageNumber = 1, searchTerm = "") {
+    if (searchTerm) {
+      return `${endPoint}?search=${searchTerm}&page=${pageNumber}`;
+    } else {
+      return `${endPoint}?page=${pageNumber}`;
+    }
+  }
+  async function fetchBookList(api = endPoint) {
     renderSkeletonCards();
     try {
-      const response = await fetch(endPoint);
+      const response = await fetch(api);
       if (!response.ok) {
         throw new Error(`Error! status: ${response.status}`);
       }
@@ -55,14 +67,24 @@ document.addEventListener("DOMContentLoaded", function() {
       extractGenres(bookListData.results);
       renderBookCards(bookListData.results);
       renderGenreDropdown();
+      prevUrl = bookListData.previous;
+      nextUrl = bookListData.next;
+      pagination();
     } catch (error) {
       console.error(error);
     }
   }
+  console.log({ genres });
   fetchBookList();
   function renderBookCards(books) {
     const cardContainer = document.querySelector("#book-card-container");
     cardContainer.innerHTML = "";
+    if (books.length === 0) {
+      bookListContainer.innerHTML = `<div class="no-data-found-container">
+        <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
+      </div>`;
+      return;
+    }
     books.forEach((book) => {
       var _a;
       const bookCard = `
@@ -114,69 +136,105 @@ document.addEventListener("DOMContentLoaded", function() {
       cardContainer.innerHTML += skeletonCard;
     }
   }
-  const searchInput = document.querySelector(".search-input");
-  const bookListContainer = document.querySelector("#book-card-container");
-  const fetchSearchBookList = async (searchTerm) => {
-    try {
-      const response = await fetch(`https://gutendex.com/books?search=${searchTerm}`);
-      if (!response.ok) {
-        throw new Error(`Error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.results;
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
-  const renderBooks = (books) => {
-    bookListContainer.innerHTML = "";
-    if (books.length === 0) {
-      bookListContainer.innerHTML = `<div class="no-data-found-container">
-        <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
-      </div>`;
-      return;
-    }
-    books.forEach((book) => {
-      var _a;
-      const bookCard = `
-      <div class="card-container">
-        <div class="rounded-lg overflow-hidden shadow-custom1">
-          <div class="w-full image-container">
-            <img class="w-full object-cover object-center card-image !h-[400px]" src="${book.formats["image/jpeg"] || "https://via.placeholder.com/400x250"}" alt="Book Cover" />
-          </div>
-          <div class="p-6 d-flex">
-            <h3 class="h3 font-semibold text-dark mb-4 card-title">${book.title}</h3>
-            <p class="m-text text-neutral-700 mb-2">
-              <span class="font-semibold">Author:</span> ${((_a = book.authors[0]) == null ? void 0 : _a.name) || "Unknown"}
-            </p>
-            <p class="m-text text-neutral-700 mb-2">
-              <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0] || "Unknown"}
-            </p>
-            <p class="m-text text-neutral-700 mb-6">
-              <span class="font-semibold">ID:</span> ${book.id}
-            </p>
-            <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
-              View Details
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-      bookListContainer.innerHTML += bookCard;
-    });
-  };
   searchInput.addEventListener("input", (event) => {
     clearTimeout(searchTimeout);
     const searchTerm = event.target.value.trim();
     if (searchTerm) {
       renderSkeletonCards();
       searchTimeout = setTimeout(async () => {
-        const books = await fetchSearchBookList(searchTerm);
-        renderBooks(books);
+        const url = generateUrl(1, searchTerm);
+        console.log(url);
+        fetchBookList(url);
       }, 300);
     } else {
       renderBookCards(bookListData.results);
+    }
+  });
+  function pagination() {
+    const nextPageNumber = nextUrl ? parseInt(nextUrl.split("page=")[1]) : 1;
+    const paginationEndPoints = [];
+    let currentPage;
+    if (nextPageNumber <= 3) {
+      currentPage = 1;
+    } else if (nextPageNumber <= 4) {
+      currentPage = 3;
+    } else {
+      const groupIndex = Math.floor((nextPageNumber - 5) / 2);
+      currentPage = 5 + groupIndex * 2;
+      console.log({ groupIndex });
+    }
+    for (let i = currentPage; i < currentPage + 3; i++) {
+      if (i === currentPage) {
+        paginationEndPoints.push(generateUrl(i));
+      } else if (i === currentPage + 1) {
+        paginationEndPoints.push(generateUrl(i));
+      } else {
+        let lastNumber;
+        if (currentPage === 1) {
+          lastNumber = 10;
+        } else if (currentPage === 3) {
+          lastNumber = 12;
+        } else {
+          lastNumber = currentPage + 10;
+        }
+        paginationEndPoints.push(generateUrl(lastNumber));
+      }
+    }
+    const paginationContainer = document.querySelector(".pagination-container");
+    if (!paginationContainer)
+      return;
+    paginationContainer.innerHTML = "";
+    paginationEndPoints.forEach((url, index) => {
+      if (index == 0) {
+        const pageButton = `
+                <button class="pagination-btn">
+                    ${currentPage}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      } else if (index == 1) {
+        const pageButton = `
+                <button class="pagination-btn">
+                    ${currentPage + 1}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      } else {
+        let lastNumber;
+        if (currentPage === 1) {
+          lastNumber = 10;
+        } else if (currentPage === 3) {
+          lastNumber = 12;
+        } else {
+          lastNumber = currentPage + 10;
+        }
+        const pageButton = `
+                <div class="pagination-dots">...</div>
+                <button class="pagination-btn">
+                    ${lastNumber}
+                </button>
+            `;
+        paginationContainer.innerHTML += pageButton;
+      }
+    });
+    console.log({ paginationEndPoints, currentPage, nextPageNumber });
+    const newButtons = paginationContainer.querySelectorAll(".pagination-btn");
+    newButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        fetchBookList(paginationEndPoints[index]);
+      });
+    });
+  }
+  const nextPageButton = document.querySelector(".next-btn");
+  const prevPageButton = document.querySelector(".prev-btn");
+  prevPageButton && prevPageButton.addEventListener("click", () => {
+    if (prevUrl && prevUrl !== null) {
+      fetchBookList(prevUrl);
+    }
+  });
+  nextPageButton && nextPageButton.addEventListener("click", () => {
+    if (nextUrl && nextUrl !== null) {
+      fetchBookList(nextUrl);
     }
   });
   function toggleDropdown(btnId, dropdownId) {
@@ -230,19 +288,12 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
   }
-  const languageBtn = document.getElementById("genre-btn");
-  languageBtn && languageBtn.addEventListener("click", () => toggleDropdown("genre-btn", "genre-dropdown"));
+  const genreBtn = document.getElementById("genre-btn");
+  genreBtn && genreBtn.addEventListener("click", () => toggleDropdown("genre-btn", "genre-dropdown"));
   dropdownActive("genre-btn", "genre-dropdown");
-  const nextPageButton = document.querySelector(".next-btn");
-  document.querySelector(".prev-btn");
-  nextPageButton && nextPageButton.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      fetchBookList(currentPage);
-    }
-  });
-  let genres = /* @__PURE__ */ new Set();
   function extractGenres(books) {
+    genres.clear();
+    console.log({ genres });
     books.forEach((book) => {
       const genre = book.subjects[0] || book.bookshelves[0];
       if (genre) {
@@ -253,6 +304,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function renderGenreDropdown() {
     const genreList = document.querySelector("#genre-dropdown ul");
     let genreItems = "";
+    genreList.innerHTML = "";
+    genreItems = `<li class="active block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-dark2 hover:bg-tertiary">All Genres</li>`;
     genres.forEach((genre) => {
       genreItems += `<li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-dark2 hover:bg-tertiary">${genre}</li>`;
     });
@@ -260,8 +313,8 @@ document.addEventListener("DOMContentLoaded", function() {
     genreList.querySelectorAll("li").forEach((item) => {
       item.addEventListener("click", function() {
         const selectedGenre = this.innerText;
-        const genreBtn = document.getElementById("genre-btn");
-        genreBtn.querySelector("span").innerText = selectedGenre;
+        const genreBtn2 = document.getElementById("genre-btn");
+        genreBtn2.querySelector("span").innerText = selectedGenre;
         if (selectedGenre === "All Genres") {
           renderBookCards(bookListData.results);
         } else {
@@ -274,10 +327,6 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     });
   }
-  fetchBookList().then(() => {
-    extractGenres(bookListData.results);
-    renderGenreDropdown();
-  });
   let scrollHeight;
   const scrollTopButton = document.querySelector(".scroll-top");
   window.addEventListener("scroll", function() {

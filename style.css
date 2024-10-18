@@ -529,7 +529,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Image container */
 .image-container {
-  @apply w-full bg-secondary/30 !h-[300px];
+  @apply w-full bg-secondary/30 !h-[300px] relative;
 }
 
 .card-image {
@@ -595,16 +595,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   @apply truncate w-full text-white l-text text-left;
 }
 
-/* .prev-btn:disabled,
-.next-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-} */
 /* pagination */
 .pagination-btn {
   @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium;
 }
 
 .pagination-dots {
-  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 size-14 rounded-full duration-300 justify-center font-medium
+  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 size-14 rounded-full duration-300 justify-center font-medium;
+}
+
+/* wishlist */
+.wishlist-btn {
+  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-red-500 size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium w-fit absolute right-4 top-4 z-10 ;
+}
+
+.wishlist-btn.wishlist-btn-active {
+  @apply text-red-500 bg-tertiary hover:bg-dark2;
 }

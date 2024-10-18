@@ -4,8 +4,7 @@ import "./style.css";
 document.addEventListener("DOMContentLoaded", function () {
   let bookListData = [];
   let searchTimeout;
-  // let currentPage = 1;
-  // let totalPages;
+  let wishlistBooks = [];
   let genres = new Set();
   let prevUrl;
   let nextUrl;
@@ -35,10 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
       extractGenres(bookListData.results);
       renderBookCards(bookListData.results);
       renderGenreDropdown();
-      // totalPages = bookListData.count;
+
       prevUrl = bookListData.previous;
       nextUrl = bookListData.next;
       pagination();
+      wishlist();
     } catch (error) {
       console.error(error);
     }
@@ -57,12 +57,15 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>`;
       return;
     }
-
+    let wishlistActive = false;
     books.forEach((book) => {
+      const localStorageWishlist = localStorage.getItem(book.id);
+      wishlistBooks.push(localStorageWishlist);
       const bookCard = `
       <div class="card-container">
         <div class="card-inner">
           <div class="image-container">
+          <button class="wishlist-btn ${localStorageWishlist ? "wishlist-btn-active" : ""}"><i class="ph ph-heart"></i></button>
             <img class="card-image" src="${book.formats["image/jpeg"]}" alt="Book Cover" />
           </div>
           <div class="card-content">
@@ -75,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0]}
             </p>
             <p class="card-text card-id">
-              <span class="font-semibold">ID:</span> ${book.id}
+              <span class="font-semibold">ID:</span> <p class="book-id">${book.id}</p>
             </p>
             </div>
             <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
@@ -129,6 +132,32 @@ document.addEventListener("DOMContentLoaded", function () {
       renderBookCards(bookListData.results);
     }
   });
+
+  // --------------------------- Wishlist ---------------------------
+  function wishlist() {
+    const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+
+    wishlistBtns.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        btn.classList.toggle("wishlist-btn-active");
+
+        const cardContainer = btn.closest(".card-container");
+        const bookId = cardContainer.querySelector(".book-id").textContent;
+        if (wishlistBooks.includes(bookId)) {
+          wishlistBooks = wishlistBooks.filter((id) => id !== bookId);
+
+          localStorage.removeItem(bookId);
+        } else {
+          wishlistBooks.push(bookId);
+
+          localStorage.setItem(bookId, bookId);
+        }
+      });
+    });
+    console.log(wishlistBooks);
+  }
 
   // --------------------------- Pagination ---------------------------
   function pagination() {
@@ -206,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
         paginationContainer.innerHTML += pageButton;
       }
     });
-    console.log({ paginationEndPoints, currentPage,nextPageNumber });
+    console.log({ paginationEndPoints, currentPage, nextPageNumber });
     const newButtons = paginationContainer.querySelectorAll(".pagination-btn");
     newButtons.forEach((button, index) => {
       button.addEventListener("click", () => {
