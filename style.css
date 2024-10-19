@@ -606,7 +606,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* wishlist */
 .wishlist-btn {
-  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-red-500 size-10 xl:size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium  absolute right-4 top-4 z-10 ;
+  @apply h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-red-500 size-10 xl:size-14 rounded-full hover:bg-tertiary duration-300 justify-center font-medium  absolute right-4 top-4 z-10;
 }
 
 .wishlist-btn.wishlist-btn-active {
@@ -614,5 +614,103 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .navbar-active {
-  @apply  shadow-lg backdrop-blur-xl font-medium backdrop-filter text-dark;
+  @apply shadow-lg backdrop-blur-xl font-medium backdrop-filter text-dark;
+}
+
+
+
+/* Book Details Page */
+.book-container {
+  @apply py-10;
+}
+
+.book-card {
+  @apply bg-white p-8 rounded-md shadow-lg;
+}
+
+.book-layout {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-10;
+}
+
+.book-image {
+  @apply flex justify-center lg:justify-start relative;
+}
+
+.book-title {
+  @apply text-3xl font-bold text-dark mb-4;
+}
+
+.book-author {
+  @apply text-lg mb-6;
+}
+
+.book-genre,
+.book-language,
+.book-download {
+  @apply mb-4 m-text;
+}
+
+.section-header {
+  @apply h4 text-primary font-bold mb-4;
+}
+
+.list-items {
+  @apply list-disc list-inside mb-6;
+}
+
+.format-link {
+  @apply text-blue-500 h5;
+}
+
+/* For the book details scalaton card */
+.details-container {
+  @apply py-10;
+}
+
+.details-card {
+  @apply bg-white p-8 rounded-md shadow-lg;
+}
+
+.details-layout {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-10;
+}
+
+.details-image-container {
+  @apply flex justify-center lg:justify-start relative;
+}
+
+.details-image {
+  @apply animate-pulse bg-secondary/30 w-80 h-[400px] rounded-lg;
+}
+
+.details-content {
+  @apply space-y-6;
+}
+
+.details-title {
+  @apply animate-pulse bg-secondary/30 h-10 w-3/4 rounded-lg;
+}
+
+.details-author {
+  @apply animate-pulse bg-secondary/30 h-7 w-1/2 rounded-lg;
+}
+
+.details-info {
+  @apply space-y-4;
+}
+
+.details-info-item {
+  @apply animate-pulse bg-secondary/30 h-6 rounded-lg;
+}
+
+.details-section {
+  @apply space-y-3;
+}
+
+.details-section-title {
+  @apply animate-pulse bg-secondary/30 h-8 w-1/4 rounded-lg mb-4;
+}
+
+.details-list-item {
+  @apply animate-pulse bg-secondary/30 h-6 rounded-lg;
 }

@@ -9,7 +9,7 @@
     <!-- ============ phosphor icons  ============ -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <title>Book Search App</title>
+    <title>Details - Book Search App</title>
   </head>
   <body class="relative text-black-4">
     <main>
@@ -42,13 +42,52 @@
       <div class="bg-dark2 w-full pt-40 md:pt-52 pb-20 xl:pt-[150px] relative text-white z-10">
         <div class="container items-center justify-center flex flex-col max-md:-mb-20">
           <div class="max-w-[700px]">
-            <h1 class="text-center d4 font-bold underline underline-offset-4 text-tertiary">Wishlist</h1>
+            <h1 class="text-center d4 font-bold underline underline-offset-4 text-tertiary">Book Details</h1>
           </div>
         </div>
       </div>
       <!-- --------------------------- Book Cards --------------------------- -->
-      <div class="container relative spb120px">
-        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-40" id="wishlist-book-card-container"></div>
+      <div class="bg-primary/20 relative spy120px">
+        <div class="container" id="book-details-container">
+          <div class="book-container">
+            <div class="book-card">
+              <div class="book-layout">
+                <!-- Book Image -->
+                <div class="book-image">
+                  <img src="https://www.gutenberg.org/cache/epub/84/pg84.cover.medium.jpg" alt="Frankenstein Book Cover" class="rounded-lg shadow-md w-80" />
+                </div>
+          
+                <!-- Book Details -->
+                <div>
+                  <h1 class="book-title">Frankenstein; Or, The Modern Prometheus</h1>
+                  <p class="book-author">by <span class="text-primary">Mary Wollstonecraft Shelley</span> (1797 - 1851)</p>
+          
+                  <p class="book-genre"><strong>Genre:</strong> Gothic fiction, Horror tales, Science fiction</p>
+                  <p class="book-language"><strong>Language:</strong> English</p>
+                  <p class="book-download"><strong>Download Count:</strong> 78,467</p>
+          
+                  <h2 class="section-header">Subjects</h2>
+                  <ul class="list-items">
+                    <li>Frankenstein's monster -- Fiction</li>
+                    <li>Victor Frankenstein -- Fiction</li>
+                    <li>Monsters -- Fiction</li>
+                    <li>Scientists -- Fiction</li>
+                  </ul>
+          
+                  <h2 class="section-header">Available Formats</h2>
+                  <ul class="list-items">
+                    <li><a href="https://www.gutenberg.org/ebooks/84.html.images" class="format-link">Read Online (HTML)</a></li>
+                    <li><a href="https://www.gutenberg.org/ebooks/84.epub3.images" class="format-link">Download EPUB</a></li>
+                    <li><a href="https://www.gutenberg.org/ebooks/84.kf8.images" class="format-link">Download MOBI</a></li>
+                    <li><a href="https://www.gutenberg.org/ebooks/84.txt.utf-8" class="format-link">Plain Text</a></li>
+                    <li><a href="https://www.gutenberg.org/cache/epub/84/pg84-h.zip" class="format-link">Download as ZIP</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
       </div>
 
       <!-- --------------------------- Footer --------------------------- -->
