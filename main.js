@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="card-container">
         <div class="card-inner">
           <div class="image-container">
-          <button class="wishlist-btn ${wishlistActive ? "wishlist-btn-active" : ""}"><i class="ph ph-heart"></i></button>
+          <button class="wishlist-btn ${wishlistActive ? "wishlist-btn-active" : ""}"><i class="${wishlistActive ? "ph-fill " : "ph"} ph-heart"></i></button>
             <img class="card-image" src="${book.formats["image/jpeg"]}" alt="Book Cover" />
           </div>
           <div class="card-content">
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // --------------------------- Wishlist ---------------------------
 
   async function fetchBookListForWishlist(api = endPoint) {
-    renderSkeletonCards();
+    renderSkeletonCards("#wishlist-book-card-container");
     try {
       const response = await fetch(api);
 
@@ -185,16 +185,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const cardContainer = btn.closest(".card-container");
         const bookId = cardContainer.querySelector(".book-id").textContent;
-        if (wishlistBooks.includes(bookId)) {
+        if (wishlistBooks.includes(parseInt(bookId))) {
           wishlistBooks = wishlistBooks.filter((id) => id != bookId);
           localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
+          btn.querySelector("i").classList.add("ph");
+          btn.querySelector("i").classList.remove("ph-fill");
         } else {
-          wishlistBooks.push(bookId);
+          wishlistBooks.push(parseInt(bookId));
           localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
+          btn.querySelector("i").classList.remove("ph");
+          btn.querySelector("i").classList.add("ph-fill");
         }
+        totalWishlist.textContent = wishlistBooks.length;
+        wishlistEndpoint = generateWishListEndpoint();
       });
     });
-    console.log(wishlistBooks);
+    console.log({ wishlistBooks });
   }
 
   const localStorageWishlist = localStorage.getItem("wishlistIds");
@@ -203,10 +209,15 @@ document.addEventListener("DOMContentLoaded", function () {
     wishlistBooks = JSON.parse(localStorageWishlist).map((id) => parseInt(id));
     console.log({ wishlistBooks });
   }
+  const generateWishListEndpoint = () => {
+    if (wishlistBooks.length > 0) {
+      return endPoint + "?ids=" + wishlistBooks.join(",");
+    }
+  };
   // wishlist page
   let wishlistEndpoint;
   if (wishlistBooks.length > 0) {
-    wishlistEndpoint = endPoint + "?ids=" + wishlistBooks.join(",");
+    wishlistEndpoint = generateWishListEndpoint();
   }
 
   if (wishlistEndpoint) {
@@ -436,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // -------------------------- Desktop Nav ---------------------------
   window.addEventListener("scroll", function () {
     scrollHeight = window.scrollY;
-    console.log({ scrollHeight });
+
     const desktopNav = document.querySelector(".desktop-nav");
 
     if (scrollHeight > 100) {

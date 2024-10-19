@@ -10,53 +10,48 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <title>Book Search App</title>
-    <script type="module" crossorigin src="./assets/homeOne-l-4HKtxu.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/css/homeOne.css">
+    <script type="module" crossorigin src="./assets/js/main.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/css/main.css">
   </head>
   <body class="relative text-black-4">
     <main>
+      <!-- --------------------------- Header --------------------------- -->
       <nav>
-        <div class="desktop-nav theme-transition-3 text-white fixed top-0 z-50 w-full">
-          <div class="transition-primary py-4 container theme-transition-3 hidden w-full items-center justify-between xl:flex">
+        <div class="desktop-nav duration-100 text-white fixed top-0 z-50 w-full">
+          <div class="py-4 xl:py-6 container theme-transition-3 w-full items-center justify-between flex">
             <div>
               <a href="/" class="flex items-center">
-                <img src="./assets/images/logo-p0K6JDaG.png" class="w-[50px]" alt="Desktop Logo" /> <span class="text-[40px] font-extrabold">Boo<span class="text-tertiary">k</span></span>
+                <img src="./assets/images/logo-p0K6JDaG.png" class="w-[50px]" alt="Desktop Logo" /> <span class="text-[30px] sm:text-[40px] font-extrabold">Boo<span class="text-tertiary">k</span></span>
               </a>
             </div>
 
             <!-- Menu Items  start-->
-            <div class="flex items-center justify-between gap-10">
-              <a
-                href="about.html"
-                class="l-text single-menu navbar-hover-text font-l-text theme-transition-3 relative z-10 flex cursor-pointer items-center justify-between gap-1 text-black-4 before:theme-transition-3 before:absolute before:bottom-0 before:block before:h-px before:w-0 before:bg-primary hover:text-primary hover:before:w-full"
-                >About Us</a
-              >
-
-              <a
-                href="blogs.html"
-                class="l-text single-menu navbar-hover-text font-l-text theme-transition-3 relative z-10 flex cursor-pointer items-center justify-between gap-1 text-black-4 before:theme-transition-3 before:absolute before:bottom-0 before:block before:h-px before:w-0 before:bg-primary hover:text-primary hover:before:w-full"
-                >Blog</a
-              >
-              <a
-                href="contact-us.html"
-                class="l-text single-menu navbar-hover-text font-l-text theme-transition-3 relative z-10 flex cursor-pointer items-center justify-between gap-1 text-black-4 before:theme-transition-3 before:absolute before:bottom-0 before:block before:h-px before:w-0 before:bg-primary hover:text-primary hover:before:w-full"
-                >Contact</a
-              >
+            <div class="flex items-center justify-center gap-10">
+              <a href="wishlist.html" class="">
+                <button
+                  class="h4 flex relative items-center gap-2 py-2 px-4 text-red-500 bg-white hover:text-red-500 size-10 xl:size-14 rounded-full hover:bg-secondary duration-300 justify-center font-medium"
+                >
+                  <span class="total-wishlist absolute text-white -top-2 xl:-top-3 size-6 xl:size-8 -right-2 xl:-right-3 flex items-center justify-center rounded-full bg-red-500">0</span>
+                  <i class="ph-fill ph-heart"></i>
+                </button>
+              </a>
             </div>
             <!-- Menu Items  end-->
           </div>
         </div>
       </nav>
-      <div class="bg-dark2 w-full pt-[200px] relative text-white z-10">
-        <div class="container items-center justify-center flex flex-col">
+
+      <!-- --------------------------- Hero --------------------------- -->
+      <div class="bg-dark2 w-full pt-40 md:pt-52 xl:pt-[200px] relative text-white z-10">
+        <div class="container items-center justify-center flex flex-col max-md:-mb-20">
           <div class="max-w-[700px]">
             <h1 class="text-center d4 font-bold">Discover Your Next <span class="underline underline-offset-4 text-tertiary">Favorite</span> Book</h1>
           </div>
           <p class="h4 max-w-[900px] text-center smt32px">Explore thousands of books from various genres. Search, find, and dive into the world of stories and knowledge at your fingertips.</p>
         </div>
-        <div class="bg-white w-[60%] grid grid-cols-12 gap-6 items-center mx-auto smt40px shadow-2xl translate-y-1/2 spy60px spx40px rounded-3xl">
+        <div class="bg-white container xxl:w-[60%] max-md:flex flex-col md:grid grid-cols-12 gap-4 md:gap-6 items-center mx-auto smt40px shadow-2xl translate-y-1/2 spy60px spx40px rounded-3xl">
           <!-- search -->
-          <div class="bg-dark2 items-center col-span-8 gap-6 justify-between flex rounded-lg duration-300 focus-within:shadow-xl p-2">
+          <div class="bg-dark2 items-center w-full col-span-6 4xl:col-span-8 gap-6 justify-between flex rounded-lg duration-300 focus-within:shadow-xl p-2">
             <input
               class="font-medium rounded-lg w-full py-4 pl-4 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-md search-input"
               type="text"
@@ -67,7 +62,7 @@
             </div>
           </div>
 
-          <div class="xl-text relative z-10 h-full rounded-lg font-medium col-span-4 bg-dark2">
+          <div class="xl-text relative z-10 h-full rounded-lg max-md:py-5 w-full font-medium col-span-6 4xl:col-span-4 bg-dark2">
             <button id="genre-btn" class="flex px-6 items-center w-full justify-between gap-2 text-white h-full truncate-select-text">
               <span>Select Genre</span>
 
@@ -82,11 +77,13 @@
           </div>
         </div>
       </div>
-
+      <!-- --------------------------- Book Cards --------------------------- -->
       <div class="container relative">
-        <div class="grid grid-cols-3 gap-6 mt-40" id="book-card-container"></div>
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-40" id="book-card-container"></div>
       </div>
-      <div class="container flex justify-center items-center gap-6 spt60px spb120px">
+
+      <!-- --------------------------- Pagination --------------------------- -->
+      <div class="container flex flex-wrap justify-center items-center gap-6 spt60px spb120px">
         <button class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark hover:bg-tertiary group duration-300 rounded-lg" id="prev-btn">
           <span class="p-2 bg-tertiary group-hover:bg-white rounded-full flex items-center previous-page text-dark"> <i class="ph-bold text-dark text-[24px] ph-caret-left"> </i> </span>
           <span>Previous</span>
@@ -102,7 +99,7 @@
         >
           2
         </button> -->
-       
+
         <!-- <button
           class="prev-btn h4 flex items-center gap-2 py-2 px-4 text-white bg-dark2 hover:text-dark size-14 rounded-full hover:bg-tertiary group duration-300 justify-center font-medium tenth-page-btn"
         >
@@ -112,16 +109,35 @@
           <span>Next</span> <span class="p-2 bg-tertiary text-dark group-hover:bg-white rounded-full flex items-center next-page"> <i class="ph-bold text-[24px] ph-caret-right"></i> </span>
         </button>
       </div>
+      <!-- --------------------------- Footer --------------------------- -->
+      <footer class="bg-dark2 spy40px text-white">
+        <div class="container flex justify-between items-center max-lg:flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <p>© 2024. All Rights Reserved</p>
+            <div class="w-1 h-1 bg-tertiary"></div>
+            <p>Made with <i class="ph-fill ph-heart text-tertiary"></i></p>
+          </div>
+          <div class="flex items-center gap-3">
+            <a
+              href="https://www.linkedin.com/in/lbtoha/"
+              class="p-2 border border-tertiary rounded-full text-tertiary hover:bg-tertiary hover:text-dark2 duration-150 flex items-center justify-center"
+            >
+              <i class="ph ph-linkedin-logo text-[24px]"></i>
+            </a>
+            <a href="https://github.com/lbtoha" class="p-2 border border-tertiary rounded-full text-tertiary hover:bg-tertiary hover:text-dark2 duration-150 flex items-center justify-center">
+              <i class="ph ph-github-logo text-[24px]"></i>
+            </a>
+            <a href="https://www.facebook.com/MLbTouha" class="p-2 border border-tertiary rounded-full text-tertiary hover:bg-tertiary hover:text-dark2 duration-150 flex items-center justify-center">
+              <i class="ph ph-facebook-logo text-[24px]"></i>
+            </a>
+          </div>
+          <div class="flex items-center gap-3">
+            <p>Terms of Service</p>
+            <div class="w-1 h-1 bg-tertiary"></div>
+            <p>Privacy Policy</p>
+          </div>
+        </div>
+      </footer>
     </main>
   </body>
 </html>
-
-<!-- 
-
-
-
-  fetchBookList().then(() => {
-    extractGenres(bookListData.results);
-    renderGenreDropdown();
-  });
--->

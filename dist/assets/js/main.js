@@ -42,6 +42,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   let bookListData = [];
   let searchTimeout;
+  let wishlistBooks = [];
   let genres = /* @__PURE__ */ new Set();
   let prevUrl;
   let nextUrl;
@@ -70,27 +71,43 @@ document.addEventListener("DOMContentLoaded", function() {
       prevUrl = bookListData.previous;
       nextUrl = bookListData.next;
       pagination();
+      wishlist();
     } catch (error) {
       console.error(error);
     }
   }
-  console.log({ genres });
-  fetchBookList();
-  function renderBookCards(books) {
-    const cardContainer = document.querySelector("#book-card-container");
-    cardContainer.innerHTML = "";
-    if (books.length === 0) {
-      bookListContainer.innerHTML = `<div class="no-data-found-container">
+  const mainPageCardContainer = document.querySelector("#book-card-container");
+  if (mainPageCardContainer) {
+    fetchBookList();
+  }
+  function renderBookCards(books, containerId = "#book-card-container") {
+    const cardContainer = document.querySelector(containerId);
+    if (cardContainer) {
+      cardContainer.innerHTML = "";
+      if (books.length === 0) {
+        bookListContainer.innerHTML = `<div class="no-data-found-container">
         <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
       </div>`;
-      return;
-    }
-    books.forEach((book) => {
-      var _a;
-      const bookCard = `
+        return;
+      }
+      books.forEach((book) => {
+        var _a;
+        const localStorageWishlist2 = localStorage.getItem("wishlistIds");
+        let wishlistActive = false;
+        if (localStorageWishlist2) {
+          wishlistBooks = JSON.parse(localStorageWishlist2).map((id) => parseInt(id));
+          console.log({ wishlistBooks });
+          wishlistBooks.forEach((id) => {
+            if (id == book.id) {
+              wishlistActive = true;
+            }
+          });
+        }
+        const bookCard = `
       <div class="card-container">
         <div class="card-inner">
           <div class="image-container">
+          <button class="wishlist-btn ${wishlistActive ? "wishlist-btn-active" : ""}"><i class="${wishlistActive ? "ph-fill " : "ph"} ph-heart"></i></button>
             <img class="card-image" src="${book.formats["image/jpeg"]}" alt="Book Cover" />
           </div>
           <div class="card-content">
@@ -103,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function() {
               <span class="font-semibold">Genre:</span> ${book.subjects[0] || book.bookshelves[0]}
             </p>
             <p class="card-text card-id">
-              <span class="font-semibold">ID:</span> ${book.id}
+              <span class="font-semibold">ID:</span> <span class="book-id">${book.id}</span>
             </p>
             </div>
             <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
@@ -113,14 +130,16 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
       </div>
     `;
-      cardContainer.innerHTML += bookCard;
-    });
+        cardContainer.innerHTML += bookCard;
+      });
+    }
   }
-  function renderSkeletonCards() {
-    const cardContainer = document.querySelector("#book-card-container");
-    cardContainer.innerHTML = "";
-    for (let i = 0; i < 6; i++) {
-      const skeletonCard = `
+  function renderSkeletonCards(containerId = "#book-card-container") {
+    const cardContainer = document.querySelector(containerId);
+    if (cardContainer) {
+      cardContainer.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const skeletonCard = `
           <div class="scalaton-card">
             <div class="scalaton-card-inner">
               <div class="scalaton-card-placeholder"></div>
@@ -133,10 +152,11 @@ document.addEventListener("DOMContentLoaded", function() {
               </div>
             </div>
           </div>`;
-      cardContainer.innerHTML += skeletonCard;
+        cardContainer.innerHTML += skeletonCard;
+      }
     }
   }
-  searchInput.addEventListener("input", (event) => {
+  searchInput && searchInput.addEventListener("input", (event) => {
     clearTimeout(searchTimeout);
     const searchTerm = event.target.value.trim();
     if (searchTerm) {
@@ -150,6 +170,68 @@ document.addEventListener("DOMContentLoaded", function() {
       renderBookCards(bookListData.results);
     }
   });
+  async function fetchBookListForWishlist(api = endPoint) {
+    renderSkeletonCards("#wishlist-book-card-container");
+    try {
+      const response = await fetch(api);
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      bookListData = await response.json();
+      renderBookCards(bookListData.results, "#wishlist-book-card-container");
+      wishlist();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  function wishlist() {
+    const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+    const totalWishlist = document.querySelector(".total-wishlist");
+    console.log({ totalWishlist });
+    if (wishlistBooks.length > 0 && totalWishlist) {
+      totalWishlist.textContent = wishlistBooks.length;
+    }
+    wishlistBtns.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        btn.classList.toggle("wishlist-btn-active");
+        const cardContainer = btn.closest(".card-container");
+        const bookId = cardContainer.querySelector(".book-id").textContent;
+        if (wishlistBooks.includes(parseInt(bookId))) {
+          wishlistBooks = wishlistBooks.filter((id) => id != bookId);
+          localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
+          btn.querySelector("i").classList.add("ph");
+          btn.querySelector("i").classList.remove("ph-fill");
+        } else {
+          wishlistBooks.push(parseInt(bookId));
+          localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
+          btn.querySelector("i").classList.remove("ph");
+          btn.querySelector("i").classList.add("ph-fill");
+        }
+        totalWishlist.textContent = wishlistBooks.length;
+        wishlistEndpoint = generateWishListEndpoint();
+      });
+    });
+    console.log({ wishlistBooks });
+  }
+  const localStorageWishlist = localStorage.getItem("wishlistIds");
+  if (localStorageWishlist) {
+    wishlistBooks = JSON.parse(localStorageWishlist).map((id) => parseInt(id));
+    console.log({ wishlistBooks });
+  }
+  const generateWishListEndpoint = () => {
+    if (wishlistBooks.length > 0) {
+      return endPoint + "?ids=" + wishlistBooks.join(",");
+    }
+  };
+  let wishlistEndpoint;
+  if (wishlistBooks.length > 0) {
+    wishlistEndpoint = generateWishListEndpoint();
+  }
+  if (wishlistEndpoint) {
+    fetchBookListForWishlist(wishlistEndpoint);
+  }
+  console.log({ wishlistEndpoint });
   function pagination() {
     const nextPageNumber = nextUrl ? parseInt(nextUrl.split("page=")[1]) : 1;
     const paginationEndPoints = [];
@@ -328,103 +410,13 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
   let scrollHeight;
-  const scrollTopButton = document.querySelector(".scroll-top");
   window.addEventListener("scroll", function() {
     scrollHeight = window.scrollY;
     const desktopNav = document.querySelector(".desktop-nav");
-    const loginButton = document.querySelector(".home-three-login");
-    if (scrollHeight > 50) {
-      desktopNav == null ? void 0 : desktopNav.classList.add("bg-white-1");
-      loginButton == null ? void 0 : loginButton.classList.remove("text-white-1");
-      loginButton == null ? void 0 : loginButton.classList.add("text-black-4");
+    if (scrollHeight > 100) {
+      desktopNav == null ? void 0 : desktopNav.classList.add("navbar-active");
     } else {
-      loginButton == null ? void 0 : loginButton.classList.remove("text-black-4");
-      loginButton == null ? void 0 : loginButton.classList.add("text-white-1");
-      desktopNav == null ? void 0 : desktopNav.classList.remove("bg-white-1");
+      desktopNav == null ? void 0 : desktopNav.classList.remove("navbar-active");
     }
-    if (scrollHeight > 500) {
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("opacity-1");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("visible");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("invisible");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("opacity-0");
-    } else {
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("opacity-1");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.remove("visible");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("invisible");
-      scrollTopButton == null ? void 0 : scrollTopButton.classList.add("opacity-0");
-    }
-  });
-  const currentUrl = window.location.pathname;
-  let withoutSlash;
-  if (currentUrl.length > 1) {
-    withoutSlash = currentUrl.split("/")[1];
-  } else {
-    withoutSlash = currentUrl;
-  }
-  const singleMenu = document.querySelectorAll(".single-menu");
-  const menuItems = document.querySelectorAll(".menu li a");
-  menuItems.forEach((item) => {
-    const menuItemUrl = item.getAttribute("href");
-    if (withoutSlash === menuItemUrl) {
-      item.parentElement.classList.add("active-nav");
-      item.parentElement.parentElement.parentElement.querySelector("li p").classList.add("parent-nav-active");
-      item.parentElement.classList.add("parent-nav-active");
-    }
-  });
-  singleMenu.forEach((item) => {
-    const menuItemUrl = item.getAttribute("href");
-    if (withoutSlash === menuItemUrl) {
-      item.classList.add("parent-nav-active");
-    }
-  });
-  const menuToggleButton = document.querySelector(".mobile-nav-toggle");
-  const mobileMenuOverlay = document.querySelector(".sidebar-overlay");
-  menuToggleButton && menuToggleButton.addEventListener("click", sidebarToggle);
-  mobileMenuOverlay && mobileMenuOverlay.addEventListener("click", sidebarToggle);
-  function sidebarToggle() {
-    const menuSidebar = document.querySelector(".menu-sidebar");
-    menuSidebar.classList.forEach((item) => {
-      if (item === "menu-sidebar-active") {
-        menuSidebar.classList.remove("menu-sidebar-active");
-      } else {
-        menuSidebar.classList.add("menu-sidebar-active");
-      }
-    });
-    mobileMenuOverlay.classList.forEach((item) => {
-      if (item === "menu-sidebar-overlay-active") {
-        mobileMenuOverlay.classList.remove("menu-sidebar-overlay-active");
-      } else {
-        mobileMenuOverlay.classList.add("menu-sidebar-overlay-active");
-      }
-    });
-  }
-  const mobileNavListParent = document.querySelectorAll(".mobile-nav-dropdown");
-  const allList = document.querySelectorAll(".mobile-menu-container .mobile-nav-list");
-  mobileNavListParent.forEach((item) => {
-    item.addEventListener("click", function() {
-      allList.forEach((item2) => {
-        item2.classList.remove("mobile-nav-list-active");
-      });
-      const mobileNavList = item.querySelector(".mobile-nav-list");
-      mobileNavList.classList.toggle("mobile-nav-list-active");
-    });
-  });
-  const mobileMenus = document.querySelectorAll(".mobile-nav-list-parent");
-  mobileMenus.forEach((mobileMenu) => {
-    const mobileMenuItems = mobileMenu.nextElementSibling.querySelectorAll(".mobile-nav-item a");
-    mobileMenuItems.forEach((item) => {
-      const menuItemUrl = item.getAttribute("href");
-      const currentUrl2 = window.location.pathname;
-      let withoutSlash2;
-      if (currentUrl2.length > 1) {
-        withoutSlash2 = currentUrl2.split("/")[1];
-      } else {
-        withoutSlash2 = currentUrl2;
-      }
-      if (withoutSlash2 === menuItemUrl) {
-        item.parentElement.classList.add("mobile-nav-active");
-        mobileMenu.classList.add("parent-nav-active");
-      }
-    });
   });
 });
