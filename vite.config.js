@@ -1,3 +1,4 @@
+
 import inject from "@rollup/plugin-inject";
 import { resolve } from "path";
 import { defineConfig } from "vite";
@@ -15,6 +16,7 @@ export default defineConfig({
       input: {
         homeOne: resolve(__dirname, "./index.html"),
         wishlist: resolve(__dirname, "./wishlist.html"),
+        bookDetails: resolve(__dirname, "./book-details.html"),
       },
       output: {
         chunkFileNames: "assets/js/[name].js",

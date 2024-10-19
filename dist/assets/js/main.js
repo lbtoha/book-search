@@ -39,6 +39,8 @@
     fetch(link.href, fetchOpts);
   }
 })();
+const wishlistImage = "" + new URL("../images/add-to-favorites-pGm8RQBD.png", import.meta.url).href;
+const nodataFound = "" + new URL("../images/no-data-found-TF9w2hJh.jpg", import.meta.url).href;
 document.addEventListener("DOMContentLoaded", function() {
   let bookListData = [];
   let searchTimeout;
@@ -46,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let genres = /* @__PURE__ */ new Set();
   let prevUrl;
   let nextUrl;
+  const currentUrl = window.location.href;
   const endPoint = "https://gutendex.com/books";
   const searchInput = document.querySelector(".search-input");
   const bookListContainer = document.querySelector("#book-card-container");
@@ -81,19 +84,19 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchBookList();
   }
   function renderBookCards(books, containerId = "#book-card-container") {
-    const cardContainer = document.querySelector(containerId);
-    if (cardContainer) {
-      cardContainer.innerHTML = "";
+    const cardContainer2 = document.querySelector(containerId);
+    if (cardContainer2) {
+      cardContainer2.innerHTML = "";
       if (books.length === 0) {
         bookListContainer.innerHTML = `<div class="no-data-found-container">
-        <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
+        <img src="${nodataFound}" class="no-data-found-image" alt="image" />
       </div>`;
         return;
       }
+      let wishlistActive = false;
       books.forEach((book) => {
         var _a;
         const localStorageWishlist2 = localStorage.getItem("wishlistIds");
-        let wishlistActive = false;
         if (localStorageWishlist2) {
           wishlistBooks = JSON.parse(localStorageWishlist2).map((id) => parseInt(id));
           console.log({ wishlistBooks });
@@ -123,21 +126,21 @@ document.addEventListener("DOMContentLoaded", function() {
               <span class="font-semibold">ID:</span> <span class="book-id">${book.id}</span>
             </p>
             </div>
-            <a href="${book.formats["text/html"]}" target="_blank" class="primary-btn">
+            <a href="/book-details.html?id=${book.id}" class="primary-btn">
               View Details
             </a>
           </div>
         </div>
       </div>
     `;
-        cardContainer.innerHTML += bookCard;
+        cardContainer2.innerHTML += bookCard;
       });
     }
   }
   function renderSkeletonCards(containerId = "#book-card-container") {
-    const cardContainer = document.querySelector(containerId);
-    if (cardContainer) {
-      cardContainer.innerHTML = "";
+    const cardContainer2 = document.querySelector(containerId);
+    if (cardContainer2) {
+      cardContainer2.innerHTML = "";
       for (let i = 0; i < 6; i++) {
         const skeletonCard = `
           <div class="scalaton-card">
@@ -152,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
               </div>
             </div>
           </div>`;
-        cardContainer.innerHTML += skeletonCard;
+        cardContainer2.innerHTML += skeletonCard;
       }
     }
   }
@@ -195,8 +198,8 @@ document.addEventListener("DOMContentLoaded", function() {
       btn.addEventListener("click", (event) => {
         event.stopPropagation();
         btn.classList.toggle("wishlist-btn-active");
-        const cardContainer = btn.closest(".card-container");
-        const bookId = cardContainer.querySelector(".book-id").textContent;
+        const cardContainer2 = btn.closest(".card-container");
+        const bookId = cardContainer2.querySelector(".book-id").textContent;
         if (wishlistBooks.includes(parseInt(bookId))) {
           wishlistBooks = wishlistBooks.filter((id) => id != bookId);
           localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
@@ -228,10 +231,20 @@ document.addEventListener("DOMContentLoaded", function() {
   if (wishlistBooks.length > 0) {
     wishlistEndpoint = generateWishListEndpoint();
   }
-  if (wishlistEndpoint) {
+  const wishlistContainer = document.querySelector("#wishlist-book-card-container");
+  if (wishlistEndpoint && wishlistContainer) {
     fetchBookListForWishlist(wishlistEndpoint);
+  } else {
+    if (wishlistContainer) {
+      wishlistContainer.innerHTML = ` <div class="no-data-found-container">
+      <div>
+      <img src="${wishlistImage}" class="no-data-found-image" alt="image" />
+      </div>
+      <h3 class="empty-wishlist-text">Wishlist Empty</h3>
+      </div>
+      `;
+    }
   }
-  console.log({ wishlistEndpoint });
   function pagination() {
     const nextPageNumber = nextUrl ? parseInt(nextUrl.split("page=")[1]) : 1;
     const paginationEndPoints = [];
@@ -408,6 +421,115 @@ document.addEventListener("DOMContentLoaded", function() {
         toggleDropdown("genre-btn", "genre-dropdown");
       });
     });
+  }
+  const param = currentUrl.split("?id=")[1];
+  console.log({ currentUrl, param });
+  const bookDetailsEndPoint = `https://gutendex.com/books/${param}`;
+  async function bookDetails(api = endPoint) {
+    renderDetailsSkeletonLoader();
+    wishlist();
+    try {
+      const response = await fetch(api);
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      const bookDetailsData = await response.json();
+      console.log("bookDetails api", api, bookDetailsData);
+      renderBookDetailsCards(bookDetailsData);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  const cardContainer = document.getElementById("book-details-container");
+  if (cardContainer) {
+    bookDetails(bookDetailsEndPoint);
+  }
+  function renderBookDetailsCards(book) {
+    var _a, _b, _c;
+    if (cardContainer) {
+      cardContainer.innerHTML = "";
+      const bookCard = `
+      <div class="book-container">
+        <div class="book-card">
+          <div class="book-layout">
+            <!-- Book Image -->
+            <div class="book-image">
+              <div>
+              <img src="${book.formats["image/jpeg"]}" alt="${book.title} Cover" class="rounded-lg shadow-md w-80" />
+              </div>
+            </div>
+
+            <!-- Book Details -->
+            <div>
+              <h1 class="book-title">${book.title}</h1>
+              <p class="book-author">by <span class="text-primary">${(_a = book.authors[0]) == null ? void 0 : _a.name}</span> (${(_b = book.authors[0]) == null ? void 0 : _b.birth_year} - ${(_c = book.authors[0]) == null ? void 0 : _c.death_year})</p>
+
+              <p class="book-genre"><strong>Genre:</strong> ${book.subjects.join(", ") || "Not Specified"}</p>
+              <p class="book-language"><strong>Language:</strong> ${book.languages.join(", ")}</p>
+              <p class="book-download"><strong>Download Count:</strong> ${book.download_count.toLocaleString()}</p>
+
+              <h2 class="section-header">Subjects</h2>
+              <ul class="list-items">
+                ${book.subjects.map((subject) => `<li>${subject}</li>`).join("")}
+              </ul>
+
+              <h2 class="section-header">Available Formats</h2>
+              <ul class="list-items">
+                <li><a href="${book.formats["text/html"]}" target="_blank" class="format-link">Read Online (HTML)</a></li>
+                <li><a href="${book.formats["application/epub+zip"]}" class="format-link">Download EPUB</a></li>
+                <li><a href="${book.formats["application/x-mobipocket-ebook"]}" class="format-link">Download MOBI</a></li>
+                <li><a href="${book.formats["text/plain"]}" class="format-link">Plain Text</a></li>
+                <li><a href="${book.formats["application/octet-stream"]}" class="format-link">Download as ZIP</a></li>
+             </ul>
+            </div>
+          </div>
+        </div>
+      </div>`;
+      cardContainer.innerHTML = bookCard;
+    }
+  }
+  function renderDetailsSkeletonLoader() {
+    if (cardContainer) {
+      cardContainer.innerHTML = `
+        <div class="details-container">
+            <div class="details-card">
+                <div class="details-layout">
+                    <div class="details-image-container">
+                        <div class="details-image"></div>
+                    </div>
+
+                    <div class="details-content">
+                        <div class="details-title"></div>
+                        <div class="details-author"></div>
+
+                        <div class="details-info">
+                            <div class="details-info-item w-2/3"></div>
+                            <div class="details-info-item w-1/2"></div>
+                            <div class="details-info-item w-2/3"></div>
+                        </div>
+
+                        <div class="details-section">
+                            <div class="details-section-title"></div>
+                            ${Array(4).fill().map(
+        () => `
+                                <div class="details-list-item w-3/4"></div>
+                            `
+      ).join("")}
+                        </div>
+
+                        <div class="details-section">
+                            <div class="details-section-title w-1/3"></div>
+                            ${Array(5).fill().map(
+        () => `
+                                <div class="details-list-item w-2/3"></div>
+                            `
+      ).join("")}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
   }
   let scrollHeight;
   window.addEventListener("scroll", function() {

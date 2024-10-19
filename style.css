@@ -474,11 +474,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .no-data-found-container {
-  @apply w-full flex flex-col justify-center items-center container top-0 absolute;
+  @apply w-full flex flex-col justify-center items-center  container col-span-12;
 }
 
 .no-data-found-image {
-  @apply w-[400px];
+  @apply w-[400px] block mx-auto;
+}
+
+.empty-wishlist-text{
+  @apply h1 text-red-500 font-bold mt-6 lg:mt-8;
 }
 
 .scalaton-card {

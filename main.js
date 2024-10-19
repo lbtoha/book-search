@@ -1,4 +1,6 @@
 "user strict";
+import wishlistImage from "./public/images/add-to-favorites.png";
+import nodataFound from "./public/images/no-data-found.jpg";
 import "./style.css";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -24,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchBookList(api = endPoint) {
     renderSkeletonCards();
-    wishlist();
     try {
       const response = await fetch(api);
 
@@ -41,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
       prevUrl = bookListData.previous;
       nextUrl = bookListData.next;
       pagination();
+      wishlist();
     } catch (error) {
       console.error(error);
     }
@@ -57,14 +59,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (books.length === 0) {
         bookListContainer.innerHTML = `<div class="no-data-found-container">
-        <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
+        <img src="${nodataFound}" class="no-data-found-image" alt="image" />
       </div>`;
         return;
       }
+
       let wishlistActive = false;
       books.forEach((book) => {
         const localStorageWishlist = localStorage.getItem("wishlistIds");
-        let wishlistActive = false;
+
         if (localStorageWishlist) {
           wishlistBooks = JSON.parse(localStorageWishlist).map((id) => parseInt(id));
           console.log({ wishlistBooks });
@@ -224,8 +227,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const wishlistContainer = document.querySelector("#wishlist-book-card-container");
   if (wishlistEndpoint && wishlistContainer) {
     fetchBookListForWishlist(wishlistEndpoint);
+  } else {
+    if (wishlistContainer) {
+      wishlistContainer.innerHTML = ` <div class="no-data-found-container">
+      <div>
+      <img src="${wishlistImage}" class="no-data-found-image" alt="image" />
+      </div>
+      <h3 class="empty-wishlist-text">Wishlist Empty</h3>
+      </div>
+      `;
+    }
   }
-  console.log({ wishlistEndpoint });
 
   // --------------------------- Pagination ---------------------------
   function pagination() {
