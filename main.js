@@ -43,32 +43,41 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error(error);
     }
   }
-  console.log({ genres });
-  fetchBookList();
+  const mainPageCardContainer = document.querySelector("#book-card-container");
+  if (mainPageCardContainer) {
+    fetchBookList();
+  }
 
-  function renderBookCards(books) {
-    const cardContainer = document.querySelector("#book-card-container");
+  function renderBookCards(books, containerId = "#book-card-container") {
+    const cardContainer = document.querySelector(containerId);
+    if (cardContainer) {
+      cardContainer.innerHTML = "";
 
-    cardContainer.innerHTML = "";
-
-    if (books.length === 0) {
-      bookListContainer.innerHTML = `<div class="no-data-found-container">
+      if (books.length === 0) {
+        bookListContainer.innerHTML = `<div class="no-data-found-container">
         <img src="./public/images/no-data-found.jpg" class="no-data-found-image" alt="image" />
       </div>`;
-      return;
-    }
-    let wishlistActive = false;
-    books.forEach((book) => {
-      const localStorageWishlist = localStorage.getItem(book.id);
-      console.log(localStorageWishlist);
-      if (localStorageWishlist !== null) {
-        wishlistBooks.push(localStorageWishlist);
+        return;
       }
-      const bookCard = `
+      let wishlistActive = false;
+      books.forEach((book) => {
+        const localStorageWishlist = localStorage.getItem("wishlistIds");
+        let wishlistActive = false;
+        if (localStorageWishlist) {
+          wishlistBooks = JSON.parse(localStorageWishlist).map((id) => parseInt(id));
+          console.log({ wishlistBooks });
+          wishlistBooks.forEach((id) => {
+            if (id == book.id) {
+              wishlistActive = true;
+            }
+          });
+        }
+
+        const bookCard = `
       <div class="card-container">
         <div class="card-inner">
           <div class="image-container">
-          <button class="wishlist-btn ${localStorageWishlist ? "wishlist-btn-active" : ""}"><i class="ph ph-heart"></i></button>
+          <button class="wishlist-btn ${wishlistActive ? "wishlist-btn-active" : ""}"><i class="ph ph-heart"></i></button>
             <img class="card-image" src="${book.formats["image/jpeg"]}" alt="Book Cover" />
           </div>
           <div class="card-content">
@@ -92,16 +101,18 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     `;
 
-      cardContainer.innerHTML += bookCard;
-    });
+        cardContainer.innerHTML += bookCard;
+      });
+    }
   }
 
-  function renderSkeletonCards() {
-    const cardContainer = document.querySelector("#book-card-container");
-    cardContainer.innerHTML = "";
+  function renderSkeletonCards(containerId = "#book-card-container") {
+    const cardContainer = document.querySelector(containerId);
+    if (cardContainer) {
+      cardContainer.innerHTML = "";
 
-    for (let i = 0; i < 6; i++) {
-      const skeletonCard = `
+      for (let i = 0; i < 6; i++) {
+        const skeletonCard = `
           <div class="scalaton-card">
             <div class="scalaton-card-inner">
               <div class="scalaton-card-placeholder"></div>
@@ -114,29 +125,50 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
           </div>`;
-      cardContainer.innerHTML += skeletonCard;
+        cardContainer.innerHTML += skeletonCard;
+      }
     }
   }
 
   // --------------------------- Search ---------------------------
 
-  searchInput.addEventListener("input", (event) => {
-    clearTimeout(searchTimeout);
-    const searchTerm = event.target.value.trim();
+  searchInput &&
+    searchInput.addEventListener("input", (event) => {
+      clearTimeout(searchTimeout);
+      const searchTerm = event.target.value.trim();
 
-    if (searchTerm) {
-      renderSkeletonCards();
-      searchTimeout = setTimeout(async () => {
-        const url = generateUrl(1, searchTerm);
-        console.log(url);
-        fetchBookList(url);
-      }, 300);
-    } else {
-      renderBookCards(bookListData.results);
-    }
-  });
+      if (searchTerm) {
+        renderSkeletonCards();
+        searchTimeout = setTimeout(async () => {
+          const url = generateUrl(1, searchTerm);
+          console.log(url);
+          fetchBookList(url);
+        }, 300);
+      } else {
+        renderBookCards(bookListData.results);
+      }
+    });
 
   // --------------------------- Wishlist ---------------------------
+
+  async function fetchBookListForWishlist(api = endPoint) {
+    renderSkeletonCards();
+    try {
+      const response = await fetch(api);
+
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      bookListData = await response.json();
+
+      renderBookCards(bookListData.results, "#wishlist-book-card-container");
+
+      wishlist();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   function wishlist() {
     const wishlistBtns = document.querySelectorAll(".wishlist-btn");
     const totalWishlist = document.querySelector(".total-wishlist");
@@ -154,18 +186,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const cardContainer = btn.closest(".card-container");
         const bookId = cardContainer.querySelector(".book-id").textContent;
         if (wishlistBooks.includes(bookId)) {
-          wishlistBooks = wishlistBooks.filter((id) => id !== bookId);
-
-          localStorage.removeItem(bookId);
+          wishlistBooks = wishlistBooks.filter((id) => id != bookId);
+          localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
         } else {
           wishlistBooks.push(bookId);
-
-          localStorage.setItem(bookId, bookId);
+          localStorage.setItem("wishlistIds", JSON.stringify(wishlistBooks));
         }
       });
     });
     console.log(wishlistBooks);
   }
+
+  const localStorageWishlist = localStorage.getItem("wishlistIds");
+
+  if (localStorageWishlist) {
+    wishlistBooks = JSON.parse(localStorageWishlist).map((id) => parseInt(id));
+    console.log({ wishlistBooks });
+  }
+  // wishlist page
+  let wishlistEndpoint;
+  if (wishlistBooks.length > 0) {
+    wishlistEndpoint = endPoint + "?ids=" + wishlistBooks.join(",");
+  }
+
+  if (wishlistEndpoint) {
+    fetchBookListForWishlist(wishlistEndpoint);
+  }
+  console.log({ wishlistEndpoint });
 
   // --------------------------- Pagination ---------------------------
   function pagination() {

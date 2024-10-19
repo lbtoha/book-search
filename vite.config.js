@@ -14,6 +14,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         homeOne: resolve(__dirname, "./index.html"),
+        wishlist: resolve(__dirname, "./wishlist.html"),
       },
       output: {
         chunkFileNames: "assets/js/[name].js",
