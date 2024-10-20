@@ -20,9 +20,6 @@
     "@rollup/plugin-inject": "^5.0.5",
     "@studio-freight/lenis": "^1.0.35",
     "@tabler/icons-webfont": "^2.47.0",
-    "gsap": "^3.12.5",
-    "split-type": "^0.3.4",
-    "vanilla-tilt": "^1.8.1",
     "vite-plugin-handlebars": "^2.0.0"
   }
 }
